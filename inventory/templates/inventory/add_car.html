@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة سيارة جديدة</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .form-card { background: white; border-radius: 15px; border: none; }
+        .btn-save { border-radius: 50px; padding: 10px 30px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark bg-primary mb-5 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'car_list' %}">🚗 العودة للمعرض</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card form-card shadow-sm">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-4 fw-bold text-primary">إضافة سيارة للبيع</h2>
+                        <hr>
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            {% for field in form %}
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-save shadow">حفظ السيارة ونشرها الآن</button>
+                                <a href="{% url 'car_list' %}" class="btn btn-link text-muted mt-2">إلغاء والعودة</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

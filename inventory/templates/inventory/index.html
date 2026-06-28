@@ -1,0 +1,448 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- 🌟 ترسانة الألوان المتوازنة والسينمائية -->
+<style>
+    /* 1. تهيئة الموقع بالكامل باللون الأبيض المريح */
+    body {
+        padding-top: 40px !important;
+        background-color: #f8fafc !important; 
+        color: #0f172a !important;
+    }
+
+    /* 2. شريط الأسعار اللحظية الزجاجي الفخم */
+    .live-ticker-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 40px;
+        background: linear-gradient(90deg, #0f172a, #1e293b);
+        color: #ffffff;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        border-bottom: 2px solid #10b981;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .ticker-title {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0 20px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        z-index: 10000;
+        box-shadow: 8px 0 20px rgba(0,0,0,0.4);
+        white-space: nowrap;
+    }
+
+    .ticker-wrap { overflow: hidden; width: 100%; display: flex; }
+
+    @keyframes infiniteMarquee {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-50%, 0, 0); } 
+    }
+
+    .ticker-content {
+        display: flex;
+        white-space: nowrap;
+        animation: infiniteMarquee 28s linear infinite;
+    }
+
+    .ticker-wrap:hover .ticker-content { animation-play-state: paused; cursor: pointer; }
+    .ticker-block { display: flex; align-items: center; flex-shrink: 0; }
+    
+    .ticker-item {
+        padding: 0 30px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .live-dot-pulse {
+        width: 10px;
+        height: 10px;
+        background-color: #34d399;
+        border-radius: 50%;
+        display: inline-block;
+        margin-left: 8px;
+        animation: pulse-live 1.2s infinite ease-in-out;
+        box-shadow: 0 0 10px #34d399;
+    }
+
+    @keyframes pulse-live {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.3); opacity: 0.4; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* 3. أزرار الفلاتر اللحظية الأنيقة */
+    .filter-btn {
+        border-radius: 30px !important;
+        padding: 8px 22px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 1px solid #e2e8f0 !important;
+        background-color: #ffffff;
+        color: #64748b;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+        color: #ffffff !important;
+        border-color: transparent !important;
+        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* 4. كروت السيارات البيضاء الفاخرة */
+    @keyframes cardEntrance {
+        from { opacity: 0; transform: translateY(30px); filter: blur(4px); }
+        to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    .custom-car-card {
+        background: #ffffff !important; 
+        border-radius: 24px !important;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        animation: cardEntrance 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+
+    .custom-car-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 30px 50px rgba(15, 23, 42, 0.08) !important;
+        border-color: rgba(14, 165, 233, 0.3) !important;
+    }
+
+    /* 5. حاوية برواز صور السيارات (الأسود الصافي الملكي) */
+    .img-container {
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #0b0f19 !important; 
+        position: relative;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .img-container img {
+        max-height: 170px;
+        object-fit: contain;
+        filter: drop-shadow(0 15px 12px rgba(0, 0, 0, 0.6)); 
+        transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .custom-car-card:hover .img-container img {
+        transform: scale(1.12) rotate(1deg);
+    }
+
+    /* 6. ❤️ زر المفضلة النيوني المحمي */
+    .wishlist-heart {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.15); 
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.7); 
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(6px);
+        text-decoration: none !important;
+    }
+    
+    .wishlist-heart:hover { 
+        transform: scale(1.15); 
+        background: rgba(255, 255, 255, 0.3); 
+        color: #ffffff; 
+    }
+    
+    .wishlist-heart.active { 
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        color: #ffffff !important;
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.6) !important;
+    }
+
+    /* تاق الحجز النيون الأحمر الوهّاج */
+    .booked-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        color: white;
+        padding: 6px 16px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        border-radius: 30px;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        z-index: 10;
+    }
+
+    /* وسم التشويق الناري اللامع */
+    .urgency-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #ea580c;
+        background-color: #fff7ed;
+        padding: 5px 12px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: 1px solid rgba(234, 88, 12, 0.15);
+    }
+
+    /* أزرار تفاعلية ثلاثية الأبعاد */
+    .btn-action {
+        border-radius: 14px !important;
+        padding: 11px 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-details {
+        border: 2px solid #0ea5e9 !important;
+        color: #0ea5e9 !important;
+        background: transparent;
+    }
+    .btn-details:hover {
+        background: #0ea5e9 !important;
+        color: white !important;
+        box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+    }
+
+    .btn-reserve {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        color: white !important;
+        border: none !important;
+    }
+    .btn-reserve:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4) !important;
+    }
+
+    .btn-booked-disabled {
+        background: linear-gradient(135deg, #7f1d1d, #991b1b) !important; 
+        color: #fca5a5 !important; 
+        border: 1px solid #b91c1c !important;
+        cursor: not-allowed; 
+        opacity: 1 !important;
+    }
+</style>
+
+<!-- 💰 شريط أسعار الموديلات اللحظي المباشر -->
+<div class="live-ticker-header">
+    <div class="ticker-title">
+        <span class="live-dot-pulse"></span> أسعار السيارات المتاحة الآن
+    </div>
+    <div class="ticker-wrap">
+        <div class="ticker-content">
+            <div class="ticker-block">
+                <span class="ticker-item text-white-50">🔥 أسعار وموديلات الحجز الفوري المتوفرة حالياً بالأسطول:</span>
+                {% for car in ticker_cars %}
+                    <span class="ticker-item">
+                        ⚡ {{ car.brand }} <strong class="text-info">{{ car.model_name }}</strong> 
+                        ({{ car.year }}): <span class="text-success fw-bold">{{ car.price }} ريال</span>
+                    </span>
+                {% endfor %}
+            </div>
+            <div class="ticker-block">
+                <span class="ticker-item text-white-50">🔥 أسعار وموديلات الحجز الفوري المتوفرة حالياً بالأسطول:</span>
+                {% for car in ticker_cars %}
+                    <span class="ticker-item">
+                        ⚡ {{ car.brand }} <strong class="text-info">{{ car.model_name }}</strong> 
+                        ({{ car.year }}): <span class="text-success fw-bold">{{ car.price }} ريال</span>
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    
+    <!-- رأس الصفحة الفخم والمشوق -->
+    <div class="row align-items-center mb-4 pb-2 border-bottom g-3">
+        <div class="col-md-6">
+            <h2 class="fw-extrabold text-dark m-0" style="font-weight: 800;">الأسطول المتاح والمحجوز</h2>
+            <p class="text-muted small m-0 mt-1">اختر سيارتك الفاخرة وقم بتأمينها بالعربون فوراً</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <span class="badge bg-dark px-3 py-2 fs-6 rounded-pill">إجمالي الأسطول: {{ cars|length }}</span>
+        </div>
+    </div>
+
+    <!-- 🎯 أشرطة الفلاتر اللحظية الفخمة الذكية -->
+    <div class="d-flex flex-wrap gap-2 mb-5 justify-content-start" id="filterContainer">
+        <button class="btn filter-btn active" onclick="filterCars('all', this)">⚡ الكل</button>
+        <button class="btn filter-btn" onclick="filterCars('sedan', this)">🚗 سيدان</button>
+        <button class="btn filter-btn" onclick="filterCars('suv', this)">🚙 عائلية (SUV)</button>
+        <button class="btn filter-btn" onclick="filterCars('sport', this)">🏎️ رياضية</button>
+        <button class="btn filter-btn" onclick="filterCars('booked', this)">🔒 المحجوزة فقط</button>
+    </div>
+
+    <!-- شبكة عرض كروت السيارات بالتأثيرات السينمائية -->
+    <div class="row g-4" id="carGrid">
+        {% for car in cars %}
+            <div class="col-md-4 car-item-container" 
+                 data-category="{{ car.body_style|lower }}"
+                 data-booked="{% if car.is_already_booked %}true{% else %}false{% endif %}"
+                 style="animation-delay: calc({{ forloop.counter }} * 0.08s);">
+                
+                <div class="card h-100 shadow-sm custom-car-card position-relative">
+                    
+                    <!-- 🌟 التعديل السحري الحاسم والنهائي لإنهاء مشكلة الباتروال تماماً 🌟 -->
+                    <a href="{% url 'inventory:toggle_wishlist' car.id %}" 
+                       class="wishlist-heart {% if car.id in request.session.wishlist_cars %}active{% endif %}"
+                       title="إضافة {{ car.brand }} إلى المفضلة">
+                        <i class="bi bi-heart-fill"></i>
+                    </a>
+
+                    <!-- تاق الحجز المنزلق النيون -->
+                    {% if car.is_already_booked %}
+                        <div class="booked-badge">
+                            🔒 مَحجوزة
+                        </div>
+                    {% endif %}
+
+                    <!-- حاوية الصورة باللون الأسود الملكي الصافي -->
+                    <div class="img-container">
+                        {% if car.image %}
+                            <img src="{{ car.image.url }}" class="img-fluid" alt="{{ car.brand }}">
+                        {% else %}
+                            <span class="text-white-50 small fw-bold">📷 لا توجد صورة متوفرة</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- تفاصيل وبيانات السيارة -->
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h4 class="fw-bold text-dark m-0">{{ car.brand }} <span class="text-secondary font-monospace fs-5">{{ car.model_name }}</span></h4>
+                            
+                            {% if not car.is_already_booked %}
+                                <span class="urgency-tag"><i class="bi bi-fire"></i> مطلوب بشدة</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-muted small mb-4">
+                            <span class="bg-light px-2 py-1 rounded">📅 الموديل: {{ car.year }}</span>
+                            <span class="bg-light px-2 py-1 rounded ms-1">🗂️ {{ car.get_body_style_display }}</span>
+                        </p>
+                        
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-3">
+                                <div>
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">السعر الإجمالي</small>
+                                    {% if car.is_already_booked %}
+                                        <span class="text-muted text-decoration-line-through fw-bold fs-5">{{ car.price }} ريال</span>
+                                    {% else %}
+                                        <span class="text-primary fw-extrabold fs-4">{{ car.price }} <span class="fs-6 text-muted fw-normal">ريال</span></span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted d-block" style="font-size: 0.75rem;">العربون المطلـوب</small>
+                                    <span class="text-success fw-bold fs-5">1,000 <small class="fs-6 fw-normal">ريال</small></span>
+                                </div>
+                            </div>
+
+                            <!-- الأزرار ثلاثية الأبعاد التفاعلية والذكية -->
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'inventory:car_detail' car.id %}" class="btn btn-action btn-details w-100">
+                                    <i class="bi bi-eye-fill"></i> معاينة وتفاصيل السيارة
+                                </a>
+
+                                {% if car.is_already_booked %}
+                                    <button class="btn btn-action btn-booked-disabled w-100" disabled>
+                                        🔒 تم تأمين الحجز بالعربون
+                                    </button>
+                                {% else %}
+                                    <a href="{% url 'inventory:car_detail' car.id %}" class="btn btn-action btn-reserve w-100">
+                                        ⚡ احجز السيارة الآن فوراً
+                                    </a>
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="p-5 bg-white rounded-4 shadow-sm">
+                    <p class="text-muted fs-5 m-0">لا توجد سيارات معروضة حالياً في النظام.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- محرك الـ JavaScript لفلاتر الفئات والفرز الفوري للأسطول -->
+<script>
+    function filterCars(category, buttonElement) {
+        const buttons = document.querySelectorAll('#filterContainer .filter-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        buttonElement.classList.add('active');
+
+        const cars = document.querySelectorAll('.car-item-container');
+        
+        cars.forEach(car => {
+            const carCategory = car.getAttribute('data-category');
+            const isBooked = car.getAttribute('data-booked') === 'true';
+
+            if (category === 'all') {
+                showCar(car);
+            } else if (category === 'booked') {
+                if (isBooked) showCar(car); else hideCar(car);
+            } else {
+                if ((carCategory.includes(category) || (category==='suv' && carCategory.includes('عائلية')) || (category==='sport' && carCategory.includes('رياضية')) || (category==='sedan' && carCategory.includes('سيدان'))) && !isBooked) {
+                    showCar(car);
+                } else {
+                    hideCar(car);
+                }
+            }
+        });
+    }
+
+    function showCar(element) {
+        element.style.display = "block";
+        setTimeout(() => {
+            element.style.opacity = "1";
+            element.style.transform = "scale(1)";
+        }, 10);
+    }
+
+    function hideCar(element) {
+        element.style.opacity = "0";
+        element.style.transform = "scale(0.95)";
+        setTimeout(() => {
+            element.style.display = "none";
+        }, 300);
+    }
+</script>
+{% endblock %}

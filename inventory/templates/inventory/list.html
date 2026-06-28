@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض السيارات - CarProject</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        :root { --main-color: #2c3e50; --accent-color: #3498db; }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hero-section { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1500&q=80'); 
+                        background-size: cover; background-position: center; color: white; padding: 100px 0; }
+        .car-card { transition: all 0.3s ease; border: none; border-radius: 15px; overflow: hidden; }
+        .car-card:hover { transform: translateY(-10px); shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .stat-card { border-radius: 10px; border-right: 5px solid var(--accent-color); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🚗 CarProject</a>
+        <div class="ms-auto text-white d-flex align-items-center">
+            {% if user.is_authenticated %}
+                <span class="me-3 small">أهلاً، {{ user.username }}</span>
+
+                <a href="{% url 'inbox' %}" class="btn btn-outline-info btn-sm ms-2 me-2">
+                    ✉ الرسائل 
+                    <span class="badge bg-danger">{{ user.received_messages.count }}</span>
+                </a>
+
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger btn-sm">خروج</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-4">دخول</a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-light btn-sm ms-2">تسجيل جديد</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">ابحث عن سيارة أحلامك</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form action="" method="GET" class="d-flex shadow-lg p-2 bg-white rounded-pill">
+                        <input type="text" name="q" class="form-control border-0 rounded-pill px-4" placeholder="ابحث بالماركة، الموديل، أو اسم المعرض..." value="{{ query|default:'' }}">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 ms-2">ابحث الآن</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-n5">
+        <div class="row mb-5 text-center">
+            <div class="col-md-4 mb-3">
+                <div class="card stat-card shadow-sm p-3">
+                    <h6 class="text-muted">أقل سعر متوفر</h6>
+                    <h4 class="fw-bold text-success">{{ stats.min_price|default:"0" }} ريال</h4>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stat-card shadow-sm p-3">
+                    <h6 class="text-muted">أعلى سعر متوفر</h6>
+                    <h4 class="fw-bold text-primary">{{ stats.max_price|default:"0" }} ريال</h4>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stat-card shadow-sm p-3">
+                    <h6 class="text-muted">إجمالي السيارات</h6>
+                    <h4 class="fw-bold text-dark">{{ stats.total_stock|default:"0" }} سيارة</h4>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mb-4">العروض المتاحة ({{ items|length }})</h3>
+        <div class="row">
+            {% for item in items %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 car-card shadow-sm">
+                    {% if item.car.image %}
+                        <img src="{{ item.car.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary text-white text-center py-5">لا توجد صورة</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{ item.car.brand }} {{ item.car.model_name }}</h5>
+                        <p class="text-muted small">الموديل: {{ item.car.year }} | المعرض: {{ item.dealer.name }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="h5 mb-0 text-success fw-bold">{{ item.price }} ريال</span>
+                            <a href="{% url 'car_detail' item.pk %}" class="btn btn-outline-primary btn-sm px-3">التفاصيل</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">لم يتم العثور على سيارات تطابق بحثك.</p>
+                <a href="/" class="btn btn-link">عرض الكل</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <p class="mb-0 small">CarProject 2026 - منصتك الأولى لتجارة السيارات</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

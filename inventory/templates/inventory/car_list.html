@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض السيارات الإحترافي</title>
+    <!-- استدعاء خط Cairo المميز والتصميم من Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="family">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .car-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. شريط الإعلان العلوي: يعرض السعر اللحظي لأرخص سيارة -->
+    {% if cheapest_price %}
+    <div class="alert alert-info text-center m-0 py-2 shadow-sm" style="font-weight: bold; background-color: #e3f2fd; border: none; color: #0d47a1;">
+        🔥 عرض لحظي: ابدأ رحلتك الآن بأقل سعر متوفر في المعرض ابتداءً من <span style="color: #d32f2f; font-size: 1.2rem;">{{ cheapest_price }}</span> ريال فقط!
+    </div>
+    {% endif %}
+
+    <!-- 2. شريط التنقل الرئيسي Navbar الشامل -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3 sticky-top">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold text-warning" href="{% url 'index' %}">🚗 معرض النخبة</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- الروابط الأساسية للموقع -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" href="{% url 'favorites' %}">❤️ المفضلة</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" href="{% url 'comments' %}">💬 التعليقات العامة</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" href="{% url 'messages' %}">✉️ تواصل معنا / الرسائل</a>
+                    </li>
+                </ul>
+
+                <!-- جهة اليسار: أزرار التحكم للأدمن والمستخدمين بجانب بعضها -->
+                <div class="d-flex align-items-center gap-2">
+                    {% if user.is_authenticated and user.is_staff %}
+                        <!-- 🌟 الزر الذهبي للأدمن يظهر هنا تلقائياً عند تسجيل الدخول -->
+                        <a href="{% url 'add_car' %}" class="btn btn-warning font-weight-bold px-3 me-2" style="box-shadow: 0 0 10px rgba(255,193,7,0.6);">
+                            ➕ أضف سيارة جديدة
+                        </a>
+                        <a href="{% url 'admin:index' %}" class="btn btn-outline-light btn-sm me-2">لوحة التحكم</a>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        <span class="text-light me-2 small d-none d-md-inline">مرحباً، {{ user.username }}</span>
+                        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">خروج</a>
+                    {% else %}
+                        <a href="{% url 'admin:index' %}" class="btn btn-primary btn-sm">دخول الإدارة</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3. محتوى المعرض وعرض السيارات -->
+    <div class="container my-5">
+        
+        <!-- التنبيهات ورسائل النجاح من دجانغو -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="text-center mb-5">
+            <h1 class="font-weight-bold text-dark">السيارات المتاحة في المعرض</h1>
+            <p class="text-muted">تصفح مجموعتنا الواسعة واحجز سيارتك المفضلة كاش أو أقساط بلحظات</p>
+        </div>
+
+        <!-- شبكة عرض السيارات (Grid System) -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for car in cars %}
+            <div class="col">
+                <div class="card h-100 shadow-sm car-card">
+                    <!-- صورة السيارة -->
+                    {% if car.image %}
+                        <img src="{{ car.image.url }}" class="card-img-top" alt="{{ car.brand }}" style="height: 220px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary text-white text-center py-5" style="height: 220px;">لا توجد صورة متوفرة</div>
+                    {% endif %}
+                    
+                    <!-- تفاصيل السيارة -->
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title font-weight-bold mb-0 text-primary">{{ car.brand }}</h5>
+                            <span class="badge bg-secondary">{{ car.year }}</span>
+                        </div>
+                        <p class="card-text text-muted mb-1">الموديل: {{ car.model_name }}</p>
+                        <p class="card-text text-muted mb-3">النوع: {{ car.car_type }}</p>
+                        
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="h5 mb-0 text-danger font-weight-bold">{{ car.price }} ريال</span>
+                                {% if car.is_available %}
+                                    <span class="badge bg-success">متاحة فوراً</span>
+                                {% else %}
+                                    <span class="badge bg-danger">محجوزة</span>
+                                {% endif %}
+                            </div>
+                            <!-- زر الانتقال للتفاصيل والدفع -->
+                            <a href="{% url 'car_detail' car.id %}" class="btn btn-outline-primary w-100 font-weight-bold">عرض التفاصيل والحجز 🔍</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- في حال كان المعرض فارغاً تماماً -->
+            <div class="col-12 text-center my-5">
+                <div class="alert alert-warning py-4">
+                    <h3>لا توجد سيارات معروضة حالياً في الموقع!</h3>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- استدعاء ملفات الـ JavaScript الخاصة بـ Bootstrap لتشغيل القوائم المنسدلة والتنبيهات -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
