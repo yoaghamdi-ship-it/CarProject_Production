@@ -72,15 +72,18 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # 5. إعدادات الاتصال بقاعدة بيانات PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'car_db_new',
+        'USER': 'car_db_new_user',
+        'PASSWORD': 'iy2B1G3YV93jR01bNwnxfVS35RWs8WpQ',
+        'HOST': 'dpg-d90g5a3tqb8s73fq8ck0-a',
+        'PORT': '5432',
     }
 }
 
-# إذا وجد دجانغو رابط قاعدة البيانات على سيرفر Render يقوم بتبديل الاتصال فوراً
+# السيرفر (Render) يقوم بالتحويل التلقائي لقاعدة البيانات السحابية إذا وجد الرابط
 if 'DATABASE_URL' in os.environ and os.environ.get('DATABASE_URL') != '':
     DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-
 
 # 6. شروط التحقق من قوة كلمة المرور لمسؤولي النظام
 AUTH_PASSWORD_VALIDATORS = [
@@ -110,8 +113,12 @@ USE_TZ = True
 
 
 # 8. إعدادات الملفات الثابتة (CSS, JS) وملفات الميديا (صور السيارات المرفوعة)
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
