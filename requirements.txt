@@ -43,3 +43,4 @@ urllib3==2.6.3
 zope.interface==8.3
 dj-database-url
 psycopg2-binary
+gunicorn
