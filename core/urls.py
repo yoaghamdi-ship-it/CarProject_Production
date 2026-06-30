@@ -16,7 +16,7 @@ urlpatterns = [
     path('inventory/', include('inventory.urls')),
 
     path('messages/', inventory_views.messages_view, name='messages'),
-    path('comments/', include('comments.urls')),
+    #path('comments/', include('comments.urls')),
     
     # 3. روابط الحماية الجاهزة وتسجيل الدخول/الخروج والتسجيل
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
