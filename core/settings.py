@@ -15,10 +15,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-av=1l$m2=bk^2s3nmm+)h7hks0z5e4ejs^4o3q29gbs4sy2kxt'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # السماح بالوصول للموقع محلياً ومن أي مكان أثناء التطوير
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '*']
+ALLOWED_HOSTS = ['*']
 
 
 # 2. التطبيقات المثبتة في المشروع
