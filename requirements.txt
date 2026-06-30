@@ -45,3 +45,4 @@ urllib3==2.6.3
 zope.interface==8.3
 cloudinary==1.41.0
 django-cloudinary-storage==0.3.0
+gunicorn==23.0.0
