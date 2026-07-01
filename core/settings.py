@@ -130,6 +130,7 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
+# 1️⃣ القاموس الجديد المطلوب لدجانغو 6 لضبط الميديا والاستاتيك أونلاين
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -139,10 +140,15 @@ STORAGES = {
     },
 }
 
-MEDIA_URL = '/media/'
-# يمكنك إبقاء MEDIA_ROOT كما هو للاستخدام المحلي عند الرغبة
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# 2️⃣ أضف هذين السطرين القديمين هنا لكي تقرأهما مكتبة Cloudinary ولا تنهار
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 9. إعدادات نظام طبقات القنوات (تصحيح الاسم الإملائي للـ Channels)
 CHANNEL_LAYERS = {
