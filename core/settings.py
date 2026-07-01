@@ -126,19 +126,19 @@ STATICFILES_DIRS = [
 ]
 
 
-# 1️⃣ ربط الإعدادات مباشرة بالمكتبة لتلافي خطأ (Must supply cloud_name)
+# 1️⃣ ربط الإعدادات مباشرة بالمكتبة عبر متغيرات النظام الآمنة
 cloudinary.config( 
-    cloud_name = 'yoaghamdi@gmail.com', 
-    api_key = '928931488544344', 
-    api_secret = 'VMURLHaeXhDlhqMhHofCMz4wz8U',
+    cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME'), 
+    api_key = os.environ.get('CLOUDINARY_API_KEY'), 
+    api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
     secure = True
 )
 
 # 2️⃣ القاموس القديم كاحتياط للمكتبة
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'yoaghamdi@gmail.com',
-    'API_KEY': '928931488544344',
-    'API_SECRET': 'VMURLHaeXhDlhqMhHofCMz4wz8U',
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
 # 3️⃣ القاموس الجديد المطلوب إجبارياً في دجانغو 6
@@ -158,7 +158,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # 9. إعدادات نظام طبقات القنوات (تصحيح الاسم الإملائي للـ Channels)
 CHANNEL_LAYERS = {
