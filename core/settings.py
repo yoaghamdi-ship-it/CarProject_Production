@@ -125,9 +125,9 @@ STATICFILES_DIRS = [
 
 # إعدادات ملفات الميديا عبر Cloudinary
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': os.environ.get('Root'),
+    'API_KEY': os.environ.get('928931488544344'),
+    'API_SECRET': os.environ.get('VMURLHaeXhDlhqMhHofCMz4wz8U'),
 }
 
 # 1️⃣ القاموس الجديد المطلوب لدجانغو 6 لضبط الميديا والاستاتيك أونلاين
