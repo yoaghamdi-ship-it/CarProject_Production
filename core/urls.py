@@ -13,8 +13,7 @@ urlpatterns = [
     path('', inventory_views.index, name='index'), 
     
     # 🌟 التضمين السليم والوحيد لتطبيق الـ inventory (يمنع أي تضارب أو أخطاء)
-    path('inventory/', include('inventory.urls')),
-
+    path('', include('inventory.urls')),
     path('messages/', inventory_views.messages_view, name='messages'),
     #path('comments/', include('comments.urls')),
     
