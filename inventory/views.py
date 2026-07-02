@@ -207,25 +207,21 @@ def book_car(request, car_id):
 
 
 # 7. إضافة تعليق جديد
-@login_required
+@login_required # لمنع أي مستخدم غير مسجل من إرسال تعليق
 def add_comment(request, car_id):
-    if request.method == "POST":
-        car = get_object_or_404(Car, id=car_id)
-        text = request.POST.get('comment_text')
-        
-        if text:
-            inventory_item = Inventory.objects.filter(inventory_cars=car).first()
-            if not inventory_item:
-                inventory_item = Inventory.objects.first()
-                
-            if inventory_item:
-                Comment.objects.create(
-                    inventory=inventory_item, 
-                    user=request.user, 
-                    text=text
-                )
-    return redirect('car_detail', car_id=car_id)
-
+    car = get_object_or_404(Car, id=car_id)
+    if request.method == 'POST':
+        # استقبال النص من حقل الـ textarea في الـ HTML
+        comment_content = request.POST.get('content') 
+        if comment_content:
+            # إنشاء التعليق في قاعدة البيانات
+            # إذا كان اسم الحقل في الموديل عندك 'text' سنستخدمه هنا
+            Comment.objects.create(
+                car=car, 
+                user=request.user, 
+                text=comment_content # إذا كان اسم الحقل في الـ Models هو content غيرها لـ content
+            )
+    return redirect('car_detail', car_id=car.id) # إعادة توجيه المستخدم لصفحة تفاصيل السيارة نفسها
 
 # 🔗 8. التبديل والتحكم الذكي بالمفضلة (تم التثبيت على المعرف المباشر للسيارة المحددة لمنع التبديل العشوائي)
 @login_required(login_url='login')

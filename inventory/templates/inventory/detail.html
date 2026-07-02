@@ -75,17 +75,20 @@
                         <script>
                           window.addEventListener('load', function () {
                             try {
+                              // توليد الرابط بشكل ديناميكي ليعمل على المضيف المحلي وعلى Render تلقائياً
+                              var currentOrigin = window.location.origin;
+
                               Moyasar.init({
-                                element: '.mysr-form', // نستخدم الكلاس القياسي لميسر لضمان التعرف التلقائي
+                                element: '.mysr-form', 
                                 amount: 100000, // 1000 ريال بالهللة
                                 currency: 'SAR',
                                 description: 'عربون حجز سيارة: {{ car.brand }} {{ car.model_name }}',
                                 publishable_api_key: 'pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3',
-                                callback_url: 'http://127.0.0.1:8000/payment/callback/',
+                                callback_url: currentOrigin + '/payment/callback/',
                                 methods: ['creditcard', 'stcpay'],
                                 
                                 on_completed: function (payment) {
-                                  window.location.href = 'http://127.0.0.1:8000/payment/callback/?id=' + payment.id + '&status=' + payment.status + '&message=' + payment.message;
+                                  window.location.href = currentOrigin + '/payment/callback/?id=' + payment.id + '&status=' + payment.status + '&message=' + payment.message;
                                 }
                               });
                             } catch (e) {
@@ -101,21 +104,45 @@
         </div>
     </div>
 
-    <!-- قسم التعليقات -->
-    {% if comments %}
+    <!-- قسم التعليقات المحدث -->
     <div class="row mt-5">
         <div class="col-md-7">
-            <h4 class="fw-bold mb-3">آراء العملاء حول هذه السيارة</h4>
-            {% for comment in comments %}
-                <div class="card mb-2 border-0 bg-light shadow-sm">
+            <!-- فورم كتابة تعليق جديد (يظهر دائماً إذا كان المستخدم مسجل دخول) -->
+            {% if user.is_authenticated %}
+                <div class="card mb-4 border-0 shadow-sm">
                     <div class="card-body">
-                        <p class="mb-1 text-dark">{{ comment.text }}</p>
-                        <small class="text-muted">بواسطة: {{ comment.user.username }}</small>
+                        <h5 class="fw-bold mb-3">أضف رأيك حول هذه السيارة</h5>
+                        <form action="{% url 'inventory:add_comment' car.id %}" method="POST"></form>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <textarea name="content" class="form-control" rows="3" placeholder="اكتب تعليقك هنا بكل صراحة..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary px-4">إرسال التعليق</button>
+                        </form>
                     </div>
                 </div>
-            {% endfor %}
+            {% else %}
+                <div class="alert alert-info mb-4" style="font-size: 0.95rem;">
+                    يرجى <a href="{% url 'login' %}" class="fw-bold">تسجيل الدخول</a> لتتمكن من إضافة تعليقك على السيارة.
+                </div>
+            {% endif %}
+
+            <!-- عرض التعليقات السابقة إن وجدت -->
+            <h4 class="fw-bold mb-3">آراء العملاء حول هذه السيارة</h4>
+            {% if comments %}
+                {% for comment in comments %}
+                    <div class="card mb-2 border-0 bg-light shadow-sm">
+                        <div class="card-body">
+                            <!-- التعديل هنا: استخدام الخاصية الصحيحة لنص التعليق (content أو text) بناءً على الموديل الخاص بك -->
+                            <p class="mb-1 text-dark">{{ comment.content|default:comment.text }}</p>
+                            <small class="text-muted">بواسطة: {{ comment.user.username }} | {{ comment.created_at|date:"Y-m-d" }}</small>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted bg-light p-3 rounded">لا توجد تعليقات على هذه السيارة بعد. كن أول من يشاركنا رأيه!</p>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
 </div>
 {% endblock %}
