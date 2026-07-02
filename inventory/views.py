@@ -207,21 +207,24 @@ def book_car(request, car_id):
 
 
 # 7. إضافة تعليق جديد
-@login_required # لمنع أي مستخدم غير مسجل من إرسال تعليق
+@login_required
 def add_comment(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     if request.method == 'POST':
-        # استقبال النص من حقل الـ textarea في الـ HTML
         comment_content = request.POST.get('content') 
         if comment_content:
-            # إنشاء التعليق في قاعدة البيانات
-            # إذا كان اسم الحقل في الموديل عندك 'text' سنستخدمه هنا
             Comment.objects.create(
                 car=car, 
                 user=request.user, 
-                text=comment_content # إذا كان اسم الحقل في الـ Models هو content غيرها لـ content
+                text=comment_content # أو content حسب الموديل عندك
             )
-    return redirect('car_detail', car_id=car.id) # إعادة توجيه المستخدم لصفحة تفاصيل السيارة نفسها
+    
+    # ⚠️ التعديل الهام هنا: تأكد من اسم مسار صفحة تفاصيل السيارة 
+    # إذا كان اسمها في الـ urls.py هو 'car_detail' اكتبها هكذا:
+    return redirect('car_detail', car_id=car.id)
+    
+    # أما إذا كان اسمها 'details' فقم بتغييرها إلى:
+    # return redirect('details', car_id=car.id)
 
 # 🔗 8. التبديل والتحكم الذكي بالمفضلة (تم التثبيت على المعرف المباشر للسيارة المحددة لمنع التبديل العشوائي)
 @login_required(login_url='login')
