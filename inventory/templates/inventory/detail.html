@@ -112,7 +112,7 @@
                 <div class="card mb-4 border-0 shadow-sm">
                     <div class="card-body">
                         <h5 class="fw-bold mb-3">أضف رأيك حول هذه السيارة</h5>
-                        <form action="{% url 'inventory:add_comment' car.id %}" method="POST"></form>
+                        <form action="{% url 'add_comment' car.id %}" method="POST"></form>
                             {% csrf_token %}
                             <div class="mb-3">
                                 <textarea name="content" class="form-control" rows="3" placeholder="اكتب تعليقك هنا بكل صراحة..." required></textarea>
