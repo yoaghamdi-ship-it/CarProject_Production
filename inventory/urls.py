@@ -16,5 +16,6 @@ urlpatterns = [
     # 🌟 الرابط الذكي والمحمي للمفضلة لإنهاء مشكلة النيسان باترول فوراً
     path('wishlist/toggle/<int:car_id>/', views.toggle_wishlist, name='toggle_wishlist'),
     path('favorites/', views.favorites_view, name='favorites'),
+    path('car/<int:car_id>/comment', views.add_comment, name='add_comment_no_slash'),
     path('car/<int:car_id>/comment/', views.add_comment, name='add_comment'),
 ]
