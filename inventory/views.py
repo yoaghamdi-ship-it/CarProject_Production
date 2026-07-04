@@ -209,22 +209,20 @@ def book_car(request, car_id):
 # 7. إضافة تعليق جديد
 @login_required
 def add_comment(request, car_id):
+    # استخدام car_id بشكل صحيح لجلب السيارة
     car = get_object_or_404(Car, id=car_id)
+    
     if request.method == 'POST':
-        comment_content = request.POST.get('content') 
+        comment_content = request.POST.get('content') or request.POST.get('text')
         if comment_content:
             Comment.objects.create(
-                car=car, 
-                user=request.user, 
-                text=comment_content # أو content حسب الموديل عندك
+                car=car,          # تأكد أن اسم الحقل في موديل التعليقات هو car
+                user=request.user,
+                text=comment_content
             )
-    
-    # ⚠️ التعديل الهام هنا: تأكد من اسم مسار صفحة تفاصيل السيارة 
-    # إذا كان اسمها في الـ urls.py هو 'car_detail' اكتبها هكذا:
-    return redirect('car_detail', car_id=car.id)
-    
-    # أما إذا كان اسمها 'details' فقم بتغييرها إلى:
-    # return redirect('details', car_id=car.id)
+            
+    # ⚠️ هنا السر: استخدام النطاق الصحيح inventory:car_detail للرجوع لصفحة السيارة
+    return redirect('inventory:car_detail', car_id=car.id)
 
 # 🔗 8. التبديل والتحكم الذكي بالمفضلة (تم التثبيت على المعرف المباشر للسيارة المحددة لمنع التبديل العشوائي)
 @login_required(login_url='login')
