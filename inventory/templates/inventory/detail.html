@@ -112,7 +112,7 @@
                 <div class="card mb-4 border-0 shadow-sm">
                     <div class="card-body">
                         <h5 class="fw-bold mb-3">أضف رأيك حول هذه السيارة</h5>
-                        <form action="/car/{{ car.id }}/comment/" method="POST">
+                        <form action="{% url 'add_comment' car_id=car.id %}" method="POST">
                             {% csrf_token %}
     
                             <!-- مربع النص للتعليق -->
