@@ -185,3 +185,9 @@ LOGIN_REDIRECT_URL = 'index'     # أين يذهب المستخدم مباشرة
 LOGOUT_REDIRECT_URL = 'index'    # أين يتم توجيهه بعد تسجيل الخروج
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# إعدادات الأمان لجلسات الدخول على سيرفر Render
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_SAVE_EVERY_REQUEST = True
