@@ -192,9 +192,12 @@
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
                                 <li>
-                                    <form action="/accounts/logout/" method="post" class="m-0">
+                                    <!-- زر تسجيل الخروج الصحيح والمتوافق مع Django الحديث -->
+                                    <form action="{% url 'logout' %}" method="POST" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">تسجيل خروج</button>
+                                        <button type="submit" class="btn btn-link text-danger p-0 m-0 align-baseline" style="text-decoration: none;">
+                                            تسجيل الخروج
+                                        </button>
                                     </form>
                                 </li>
                             </ul>
