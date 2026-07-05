@@ -213,20 +213,29 @@ def add_comment(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
     if request.method == 'POST':
+        # نأخذ النص سواء كان الحقل اسمه content أو text في الموديل
         comment_content = request.POST.get('content') or request.POST.get('text')
+        
         if comment_content:
-            # سنقوم بإنشاء التعليق وتعبئة الحقول يدوياً لتفادي رفض قاعدة البيانات
             comment = Comment()
             comment.user = request.user
-            comment.text = comment_content
             
-            # هنا التعديل السحري: جرب ربطه بالسيارة، وإذا رفضت قاعدة البيانات اربطه بالوكيل الخاص بها
+            # تعبئة الحقل النصي حسب ما هو معرف في الموديل لديك (تأكد أيهما يعمل)
+            if hasattr(comment, 'content'):
+                comment.content = comment_content
+            else:
+                comment.text = comment_content
+            
+            # ربط التعليق بالسيارة أو بالـ Inventory بشكل صحيح
             if hasattr(comment, 'car'):
                 comment.car = car
             elif hasattr(comment, 'inventory'):
-                comment.inventory = car.inventory # أو الحقل المربوط بالوكيل عندك
+                # جلب الـ inventory المرتبط بهذه السيارة كما فعلنا في car_detail
+                inventory_item = Inventory.objects.filter(inventory_cars=car).first()
+                if inventory_item:
+                    comment.inventory = inventory_item
             
-            comment.save() # حفظ التعديل بأمان
+            comment.save()  # حفظ التعليق بنجاح الآن
             
     return redirect('inventory:car_detail', car_id=car.id)
 
