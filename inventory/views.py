@@ -11,6 +11,7 @@ from django.db import models
 from django.db.models import Min, Q, IntegerField
 from django.apps import apps 
 from django.db.models.functions import Cast
+from django.views.generic import ListView
 import re
 import json
 
@@ -396,3 +397,9 @@ def payment_callback(request):
     else:
         messages.error(request, "فشلت عملية الدفع أو تم إلغاؤها.")
         return redirect('index')
+    
+class AllCommentsView(ListView):
+    model = Comment
+    template_name = 'inventory/all_comments.html'  # تأكد من إنشاء هذا الملف في الـ templates
+    context_object_name = 'comments'
+    ordering = ['-id']

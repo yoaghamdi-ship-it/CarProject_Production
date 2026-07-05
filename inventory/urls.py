@@ -18,4 +18,5 @@ urlpatterns = [
     path('favorites/', views.favorites_view, name='favorites'),
     path('car/<int:car_id>/comment', views.add_comment, name='add_comment_no_slash'),
     path('car/<int:car_id>/comment/', views.add_comment, name='add_comment'),
+    path('comments/', views.AllCommentsView.as_view(), name='all_comments'),
 ]

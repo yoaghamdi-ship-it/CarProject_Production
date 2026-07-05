@@ -1,0 +1,45 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<div class="container mt-5" dir="rtl" style="text-align: right;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4 text-primary">💬 جميع تعليقات المستخدمين</h2>
+            
+            {% if comments %}
+                <div class="list-group">
+                    {% for comment in comments %}
+                        <div class="list-group-item list-group-item-action flex-column align-items-start mb-3 shadow-sm rounded border-right border-primary" style="border-right-width: 5px !important;">
+                            <div class="d-flex w-100 justify-content-between mb-2">
+                                <h5 class="mb-1 font-weight-bold text-secondary">
+                                    👤 {% if comment.user %}{{ comment.user.username }}{% else %}زائر{% endif %}
+                                </h5>
+                                <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+                            </div>
+                            <p class="mb-2 text-dark" style="font-size: 1.1rem;">
+                                {{ comment.content }}
+                            </p>
+                            
+                            {% if comment.inventory and comment.inventory.inventory_cars.all %}
+                                <div class="mt-2 pt-2 border-top">
+                                    <small class="text-muted">تعليق على: </small>
+                                    {% for car in comment.inventory.inventory_cars.all %}
+                                        <a href="{% url 'inventory:car_detail' car.id %}" class="badge badge-info p-2">
+                                            🚗 {{ car.brand }} - {{ car.model }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center p-5 rounded shadow-sm">
+                    <h4 class="mb-3">لا توجد تعليقات بعد!</h4>
+                    <p class="mb-0 text-muted">بمجرد أن يكتب المستخدمون تعليقات على السيارات، ستظهر هنا فوراً.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
