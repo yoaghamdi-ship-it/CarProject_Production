@@ -34,7 +34,7 @@ def check_expired_bookings():
     for booking in active_bookings:
         expired = False
         
-        # حالة الـ 24 ساعة قبل دفع العربون
+        # حالة الـ 24 ساعت قبل دفع العربون
         if booking.status == 'pending' and now > booking.reserved_at + timedelta(hours=24):
             expired = True
             
@@ -217,7 +217,6 @@ def book_car(request, car_id):
 
     messages.info(request, f"تم تجهيز طلب حجز سيارة {car.brand}. يرجى سداد عربون التأكيد (1000 ريال).")
     
-    # توجيه العميل لصفحة التفاصيل مجدداً ليقوم بالضغط على زر الدفع أو إظهار نافذة ميسر مباشرة
     return redirect('inventory:car_detail', car_id=car.id)
 
 
@@ -231,7 +230,7 @@ def payment_success(request, booking_id):
     return render(request, 'inventory/payment_success.html', context)
 
 
-# 9. استقبال رد بوابة الدفع ميسر (المُعالج الحقيقي لعملية الحجز والـ Sync)
+# 9. استقبال رد بوابة الدفع ميسر (تم تجميلها وحمايتها من الـ AnonymousUser)
 def payment_callback(request):
     payment_id = request.GET.get('id')
     status = request.GET.get('status')
@@ -247,16 +246,17 @@ def payment_callback(request):
         car.is_available = False
         car.save()
         
-        # ب: تحديث سجل الحجز لربطه بقاعدة البيانات ومنع الإلغاء التلقائي
-        booking = Booking.objects.filter(car=car, user=request.user, status='pending').last()
+        # ب: تحديث سجل الحجز عبر السيارة مباشرة حماية من خطأ الـ 500 للـ Anonymous User
+        booking = Booking.objects.filter(car=car, status='pending').last()
         if booking:
             booking.status = 'paid'
             booking.deposit_paid_at = timezone.now()
             booking.save()
         else:
-            # إذا لم يتم العثور على الحجز المبدئي لأي سبب، نقوم بإنشائه فوراً لحفظ حق العميل
+            # تأمين إضافي لعدم ضياع الطلب
+            user_account = request.user if request.user.is_authenticated else None
             booking = Booking.objects.create(
-                user=request.user,
+                user=user_account,
                 car=car,
                 status='paid',
                 amount_paid=1000,
@@ -350,7 +350,7 @@ def register(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            messages.success(request, f'تم إنشاء الحساب بنجاح للمخدم {username}! يمكنك الآن تسجيل الدخول.')
+            messages.success(request, f'تم إنشاء الحساب بنجاح للمستخدم {username}! يمكنك الآن تسجيل الدخول.')
             return redirect('login')
     else:
         form = UserCreationForm()
