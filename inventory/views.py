@@ -120,37 +120,48 @@ def car_list(request):
 
 # 3. تفاصيل السيارة (محدثة للتحقق من الحجز اللحظي وعرض التعليقات وحالة المفضلة)
 def car_detail(request, car_id):
-    check_expired_bookings()
-
-    car = get_object_or_404(Car, id=car_id) 
-    is_booked = car.status == 'reserved' or Booking.objects.filter(car=car, status='paid').exists()
+    car = get_object_or_404(Car, id=car_id)
     
-    deposit_amount_halalas = 1000 * 100
-
+    # حفظ رقم السيارة الحالية في الـ Session لكي تستخدمه دالة الـ callback بعد الدفع
+    request.session['pending_car_id'] = car.id
+    
+    # جلب التعليقات المرتبطة بالـ Inventory التابع لهذه السيارة إن وجد
     inventory_item = Inventory.objects.filter(inventory_cars=car).first()
-    comments = []
-    is_favorite = False
+    comments = inventory_item.comments.all() if inventory_item else []
     
-    if inventory_item:
-        comments = Comment.objects.filter(inventory=inventory_item).order_by('-id')
-        
-        if request.user.is_authenticated:
-            try:
-                FavoriteModel = apps.get_model('inventory', 'Favorite')
-                is_favorite = FavoriteModel.objects.filter(inventory=inventory_item, user=request.user).exists()
-            except Exception:
-                is_favorite = False
-
+    # فحص ما إذا كانت السيارة محجوزة (بناءً على الحالة المعرفة في موديل Car الخاص بك)
+    # افترضنا هنا أن اسم الحالة 'booked'، يمكنك تعديلها لتطابق حقل الـ status عندك
+    is_booked = car.status == 'booked'
+    
     context = {
         'car': car,
-        'is_booked': is_booked, 
-        'publishable_key': MOYASAR_PUBLISHABLE_KEY.strip(),
-        'amount': deposit_amount_halalas, 
         'comments': comments,
-        'is_favorite': is_favorite, 
-        'user': request.user,
+        'is_booked': is_booked
     }
     return render(request, 'inventory/detail.html', context)
+
+
+@login_required
+def add_comment(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+    
+    if request.method == 'POST':
+        # جلب النص من الفورم (المربع في الـ HTML مسمى content)
+        comment_content = request.POST.get('content')
+        
+        if comment_content:
+            # جلب الـ Inventory المرتبط بهذه السيارة أولاً
+            inventory_item = Inventory.objects.filter(inventory_cars=car).first()
+            
+            # لن يتم الحفظ إلا إذا وجدنا الـ inventory منعاً لخطأ قاعدة البيانات (حقل مطلوب)
+            if inventory_item:
+                Comment.objects.create(
+                    inventory=inventory_item,
+                    user=request.user,
+                    text=comment_content # يطابق حقل text في الموديل الخاص بك
+                )
+            
+    return redirect('inventory:car_detail', car_id=car.id)
 
 
 # 4. إضافة سيارة (محمية للمسؤولين فقط)
@@ -213,22 +224,54 @@ def add_comment(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
     if request.method == 'POST':
-        # جلب النص من الفورم (في الفورم اسمه content)
+        # جلب النص من الفورم (المربع في الـ HTML مسمى content)
         comment_content = request.POST.get('content')
         
         if comment_content:
-            # 1. جلب الـ Inventory المرتبط بهذه السيارة أولاً
+            # جلب الـ Inventory المرتبط بهذه السيارة أولاً
             inventory_item = Inventory.objects.filter(inventory_cars=car).first()
             
-            # 2. لن نحفظ إلا إذا وجدنا الـ inventory منعاً لخطأ قاعدة البيانات
+            # لن يتم الحفظ إلا إذا وجدنا الـ inventory منعاً لخطأ قاعدة البيانات (حقل مطلوب)
             if inventory_item:
                 Comment.objects.create(
                     inventory=inventory_item,
                     user=request.user,
-                    text=comment_content
+                    text=comment_content # يطابق حقل text في الموديل الخاص بك
                 )
             
     return redirect('inventory:car_detail', car_id=car.id)
+
+def all_comments(request):
+    # جلب جميع التعليقات لعرضها في الصفحة العامة
+    comments = Comment.objects.all().order_by('-created_at')
+    return render(request, 'inventory/all_comments.html', {'comments': comments})
+
+
+def payment_callback(request):
+    # 1. جلب البيانات القادمة من بوابة ميسر عبر الرابط (GET Request)
+    payment_id = request.GET.get('id')
+    status = request.GET.get('status')
+    message = request.GET.get('message')
+    
+    # جلب معرف السيارة التي كان العميل يتصفحها قبل الانتقال للدفع من الـ Session
+    car_id = request.session.get('pending_car_id')
+    
+    # 2. التحقق من نجاح عملية الدفع وتحويل حالة السيارة
+    if status == 'paid' and car_id:
+        car = get_object_or_404(Car, id=car_id)
+        
+        # تحويل حالة السيارة إلى محجوزة وحفظ التعديل في قاعدة البيانات
+        car.status = 'booked' # تأكد من مطابقة الكلمة لحالات حقل status في الموديل (مثل 'booked' أو 'B')
+        car.save()
+        
+        # تنظيف الجلسة ومسح المعرف المؤقت بعد نجاح الحجز
+        if 'pending_car_id' in request.session:
+            del request.session['pending_car_id']
+            
+        return render(request, 'inventory/payment_success.html', {'car': car, 'payment_id': payment_id})
+    
+    # في حال فشل الدفع أو عدم اكتمال البيانات
+    return render(request, 'inventory/payment_failed.html', {'message': message})
 
 # 🔗 8. التبديل والتحكم الذكي بالمفضلة (تم التثبيت على المعرف المباشر للسيارة المحددة لمنع التبديل العشوائي)
 @login_required(login_url='login')
@@ -337,69 +380,28 @@ def register(request):
 
 # 14. استقبال رد بوابة الدفع ميسر 
 def payment_callback(request):
+    # 1. جلب البيانات القادمة من بوابة ميسر عبر الرابط
     payment_id = request.GET.get('id')
-    status_response = request.GET.get('status')
-    message_text = request.GET.get('message')
-
-    if status_response == 'paid' or message_text == 'APPROVED':
-        booking = Booking.objects.filter(user=request.user, status='pending').last()
-        
-        if not booking:
-            booking = Booking.objects.filter(user=request.user).exclude(status='paid').last()
-            
-        if booking:
-            booking.status = 'paid'
-            booking.transaction_id = payment_id  
-            booking.amount_paid = 1000  
-            booking.deposit_paid_at = timezone.now()  
-            booking.reserved_at = timezone.now()
-            booking.save()
-            
-            car = booking.car
-            car.status = 'reserved'
-            car.is_available = False 
-            car.save()
-            
-            messages.success(request, "تمت عملية دفع العربون وتأكيد الحجز بنجاح!")
-            return redirect('payment_success', booking_id=booking.id)
-            
-        else:
-            car_id = request.session.get('pending_car_id')
-            if car_id:
-                try:
-                    car = Car.objects.get(id=car_id)
-                    new_booking = Booking.objects.create(
-                        user=request.user,
-                        car=car,
-                        status='paid',
-                        amount_paid=1000,
-                        transaction_id=payment_id,
-                        deposit_paid_at=timezone.now(),
-                        reserved_at=timezone.now()
-                    )
-                    messages.success(request, "تم دفع العربون وإنشاء الحجز بنجاح!")
-                    return redirect('payment_success', booking_id=new_booking.id)
-                except Car.DoesNotExist:
-                    pass
-
-            last_any_booking = Booking.objects.filter(user=request.user).last()
-            if last_any_booking:
-                last_any_booking.status = 'paid'
-                last_any_booking.transaction_id = payment_id
-                last_any_booking.amount_paid = 1000
-                last_any_booking.deposit_paid_at = timezone.now()
-                last_any_booking.reserved_at = timezone.now()
-                last_any_booking.save()
-                return redirect('payment_success', booking_id=last_any_booking.id)
-
-        messages.warning(request, "تم الدفع، ولكن لم نتمكن من ربط الحجز بالسيارة تلقائياً. يرجى مراجعة الإدارة.")
-        return redirect('index')
-    else:
-        messages.error(request, "فشلت عملية الدفع أو تم إلغاؤها.")
-        return redirect('index')
+    status = request.GET.get('status')
+    message = request.GET.get('message')
     
-class AllCommentsView(ListView):
-    model = Comment
-    template_name = 'inventory/all_comments.html'  # تأكد من إنشاء هذا الملف في الـ templates
-    context_object_name = 'comments'
-    ordering = ['-id']
+    # سنحتاج إلى معرفة أي سيارة يتم حجزها الآن، عادةً نقوم بحفظها في الـ Session قبل الذهاب للدفع
+    # أو يمكننا جلبها إذا أرسلتها ميسر، الطريقة الأضمن عبر الـ Session:
+    car_id = request.session.get('pending_car_id')
+    
+    # إذا نجحت عملية الدفع من ميسر (status == 'paid' أو 'initiated' حسب التوثيق)
+    if status == 'paid' and car_id:
+        car = get_object_or_404(Car, id=car_id)
+        
+        # 2. التعديل السحري: تحويل حالة السيارة إلى محجوزة في قاعدة البيانات
+        car.status = 'booked' # أو الحرف/الكلمة المعتمدة عندك في الموديل للحجز مثل 'B' أو 'reserved'
+        car.save()
+        
+        # تنظيف الجلسة بعد نجاح الحجز
+        if 'pending_car_id' in request.session:
+            del request.session['pending_car_id']
+            
+        return render(request, 'inventory/payment_success.html', {'car': car, 'payment_id': payment_id})
+    
+    # في حال فشل الدفع أو عدم وجود سيارة معينة
+    return render(request, 'inventory/payment_failed.html', {'message': message})
