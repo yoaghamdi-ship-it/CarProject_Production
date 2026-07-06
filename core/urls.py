@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from inventory import views as inventory_views
+from . import views
 
 urlpatterns = [
     # 1. لوحة التحكم الإدارية
@@ -27,6 +28,7 @@ urlpatterns = [
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('payment/callback/', views.payment_callback, name='payment_callback'),
 ]
 
 # 5. دعم ملفات الصور (Media) والثابتة

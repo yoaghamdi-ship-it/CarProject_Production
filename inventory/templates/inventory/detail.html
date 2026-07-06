@@ -83,7 +83,7 @@
                                 currency: 'SAR',
                                 description: 'عربون حجز سيارة: {{ car.brand }} {{ car.model_name }}',
                                 publishable_api_key: 'pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3',
-                                callback_url: currentOrigin + '/payment/callback/',
+                                callback_url: window.location.origin + "{% url 'payment_callback' %}",
                                 methods: ['creditcard', 'stcpay'],
                                 
                                 on_completed: function (payment) {
