@@ -66,9 +66,8 @@
                         <!-- حاوية الدفع القياسية البسيطة -->
                         <div class="mysr-form"></div>
 
-                        <!-- استدعاء ملفات ميسر مع تفعيل خاصية التأجيل البرمجي defer لضمان استقرار الصفحة أولاً -->
+                        <!-- استدعاء ملفات ميسر الأساسية فقط والأمنة بنسبة 100% -->
                         <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.12.0/moyasar.css" />
-                        <script src="https://polyfill.io/v3/polyfill.min.js?features=fetch" defer></script>
                         <script src="https://cdn.moyasar.com/mpf/1.12.0/moyasar.js" defer></script>
 
                         <!-- السكربت التنفيذي محمي بانتظار تحميل نافذة المتصفح بالكامل -->
@@ -118,7 +117,7 @@
                             <!-- مربع النص للتعليق -->
                             <textarea name="content" class="form-control" placeholder="اكتب تعليقك هنا..." required></textarea>
                                 
-                            <!-- تأكد أن الزر مكتوب هكذا تماماً وبنوع submit -->
+                            <!-- زر الإرسال -->
                             <button type="submit" class="btn btn-primary mt-2">إرسال التعليق</button>
                         </form>
                     </div>
@@ -135,7 +134,6 @@
                 {% for comment in comments %}
                     <div class="card mb-2 border-0 bg-light shadow-sm">
                         <div class="card-body">
-                            <!-- التعديل هنا: استخدام الخاصية الصحيحة لنص التعليق (content أو text) بناءً على الموديل الخاص بك -->
                             <p class="mb-1 text-dark">{{ comment.content|default:comment.text }}</p>
                             <small class="text-muted">بواسطة: {{ comment.user.username }} | {{ comment.created_at|date:"Y-m-d" }}</small>
                         </div>
