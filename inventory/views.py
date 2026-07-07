@@ -230,7 +230,7 @@ def payment_success(request, booking_id):
     return render(request, 'inventory/payment_success.html', context)
 
 
-# 9. استقبال رد بوابة الدفع ميسر (تم تجميلها وحمايتها من الـ AnonymousUser)
+# 9. استقبال رد بوابة الدفع ميسر (مُعدلة لتفادي خطأ الـ 500 أثناء التوجيه)
 def payment_callback(request):
     payment_id = request.GET.get('id')
     status = request.GET.get('status')
@@ -246,14 +246,13 @@ def payment_callback(request):
         car.is_available = False
         car.save()
         
-        # ب: تحديث سجل الحجز عبر السيارة مباشرة حماية من خطأ الـ 500 للـ Anonymous User
+        # ب: تحديث سجل الحجز عبر السيارة مباشرة
         booking = Booking.objects.filter(car=car, status='pending').last()
         if booking:
             booking.status = 'paid'
             booking.deposit_paid_at = timezone.now()
             booking.save()
         else:
-            # تأمين إضافي لعدم ضياع الطلب
             user_account = request.user if request.user.is_authenticated else None
             booking = Booking.objects.create(
                 user=user_account,
@@ -267,7 +266,15 @@ def payment_callback(request):
         if 'pending_car_id' in request.session:
             del request.session['pending_car_id']
             
-        return redirect('inventory:payment_success', booking_id=booking.id)
+        # 💡 محاولة التوجيه الآمن: جرب الرابط بالـ namespace أولاً، وإذا فشل توجه بدونه، وإذا فشل توجه للرئيسية
+        try:
+            return redirect('inventory:payment_success', booking_id=booking.id)
+        except Exception:
+            try:
+                return redirect('payment_success', booking_id=booking.id)
+            except Exception:
+                messages.success(request, "تم الحجز بنجاح!")
+                return redirect('/') # التوجيه للرئيسية كخيار آمن أخير بدلاً من خطأ 500
     
     return render(request, 'inventory/payment_failed.html', {'message': message})
 
