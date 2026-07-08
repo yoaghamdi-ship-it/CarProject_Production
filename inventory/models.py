@@ -60,6 +60,16 @@ class Car(models.Model):
         ('sold', 'مباعة بالكامل'),
     ]
 
+    # 🌟 الحقل الجديد: ربط السيارة بالمعرض / الوكيل (صاحب السيارة)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='cars',
+        null=True, 
+        blank=True,
+        verbose_name="صاحب السيارة / المعرض"
+    )
+
     # الربط مع الوكيل
     inventory = models.ForeignKey(
         Inventory, 
@@ -164,11 +174,6 @@ class Booking(models.Model):
         return f"{self.user.username if self.user else 'زائر'} - {self.car.brand} ({self.get_status_display()})"
 
     def has_expired(self):
-        """
-        تحديث منطق الفحص الذكي:
-        1. إذا كانت الحالة 'pending' (انتظار العربون) ومرت 24 ساعة -> منتهي.
-        2. إذا كانت الحالة 'paid' (تم دفع العربون) ومرت 48 ساعة على دفع العربون ولم تُشترَ بالكامل -> منتهي.
-        """
         now = timezone.now()
         
         # حالة الـ 24 ساعة قبل دفع العربون
