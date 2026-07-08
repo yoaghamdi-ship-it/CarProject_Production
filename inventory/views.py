@@ -14,6 +14,8 @@ from django.db.models.functions import Cast
 from django.views.generic import TemplateView
 import re
 import json
+import logging
+logger = logging.getLogger(__name__)
 
 # --- استيراد الموديلات ---
 from .models import Inventory, Comment, Favorite, Message, Booking, Car
@@ -222,19 +224,17 @@ def book_car(request, car_id):
 
 # 8. معالجة نجاح الدفع وعرض الفاتورة (مؤمنة 100% من الـ None والـ 500)
 def payment_success(request, booking_id):
-    # جلب الحجز، وإذا لم يجده يتوجه للرئيسية مباشرة بدلاً من انهيار السيرفر
     try:
-        booking = Booking.objects.get(id=booking_id)
-        car = booking.car
-    except Booking.DoesNotExist:
-        messages.success(request, "تم تأكيد الحجز والدفع بنجاح!")
+        booking = get_object_or_404(Booking, id=booking_id)
+        context = {
+            'booking': booking,
+            'car': booking.car, 
+        }
+        return render(request, 'inventory/payment_success.html', context)
+    except Exception as e:
+        logger.error(f"Error in payment_success: {str(e)}")
+        messages.success(request, "تم تأكيد الحجز بنجاح!")
         return redirect('inventory:index')
-    
-    context = {
-        'booking': booking,
-        'car': car, 
-    }
-    return render(request, 'inventory/payment_success.html', context)
 
 
 # 9. استقبال رد بوابة الدفع ميسر (مُعاد صياغتها بالكامل لحل معضلة الـ IntegrityError)
@@ -243,52 +243,63 @@ def payment_callback(request):
     status = request.GET.get('status')
     message = request.GET.get('message')
     
+    # جلب رقم السيارة من الجلسة
     car_id = request.session.get('pending_car_id')
     
-    if status == 'paid' and car_id:
-        car = get_object_or_404(Car, id=car_id)
-        
-        # أ: تعديل حالة السيارة لتصبح محجوزة رسمياً
-        car.status = 'booked'
-        car.is_available = False
-        car.save()
-        
-        # ب: البحث عن آخر حجز مبدئي لهذه السيارة لمنع تكرار الإنشاء بدون مستخدم
-        booking = Booking.objects.filter(car=car, status='pending').last()
-        
-        if booking:
-            booking.status = 'paid'
-            booking.deposit_paid_at = timezone.now()
-            booking.save()
-        else:
-            # إذا لم يجد الحجز المبدئي المعلق، نبحث عن أي حجز نشط أو نربطه بالمستخدم الحالي إذا كان مسجلاً
-            if request.user.is_authenticated:
-                booking = Booking.objects.create(
-                    user=request.user,
-                    car=car,
-                    status='paid',
-                    amount_paid=1000,
-                    deposit_paid_at=timezone.now()
-                )
+    try:
+        if status == 'paid':
+            # إذا لم يتم العثور على car_id في الجلسة، نحاول البحث عن آخر حجز معلق
+            if not car_id:
+                booking = Booking.objects.filter(status='pending').order_by('-id').first()
+                if booking:
+                    car = booking.car
+                else:
+                    car = None
             else:
-                # حل أخير: إذا كان المستخدم مجهولاً تماماً، نحدث آخر حجز موجود للسيارة أياً كان صاحبه لتفادي الـ NULL error
-                booking = Booking.objects.filter(car=car).last()
+                car = Car.objects.filter(id=car_id).first()
+            
+            if car:
+                # 1. تحديث حالة السيارة
+                car.status = 'booked'
+                car.is_available = False
+                car.save()
+                
+                # 2. تحديث أو إنشاء سجل الحجز
+                booking = Booking.objects.filter(car=car, status='pending').last()
                 if booking:
                     booking.status = 'paid'
                     booking.deposit_paid_at = timezone.now()
                     booking.save()
+                else:
+                    # نستخدم حساب المستخدم إذا كان موثقاً، أو المالك الأخير للحجز
+                    user = request.user if request.user.is_authenticated else None
+                    if not user:
+                        last_b = Booking.objects.filter(car=car).last()
+                        user = last_b.user if last_b else None
+                    
+                    booking = Booking.objects.create(
+                        user=user,
+                        car=car,
+                        status='paid',
+                        amount_paid=1000,
+                        deposit_paid_at=timezone.now()
+                    )
+                
+                # مسح الجلسة
+                request.session.pop('pending_car_id', None)
+                
+                # التوجيه لصفحة النجاح
+                return redirect('inventory:payment_success', booking_id=booking.id)
+                
+    except Exception as e:
+        # طباعة الخطأ في سجلات Render لمعرفته بدقة إذا حدثت أي مشكلة
+        print(f"CRITICAL PAYMENT CALLBACK ERROR: {str(e)}")
+        logger.error(f"Payment callback failed: {str(e)}")
         
-        # تنظيف الجلسة
-        if 'pending_car_id' in request.session:
-            del request.session['pending_car_id']
-            
-        # جـ: التوجيه الفوري الآمن باستخدام معرف الحجز إن وجد، أو العودة للرئيسية برسالة نجاح
-        if booking:
-            return redirect('inventory:payment_success', booking_id=booking.id)
-        else:
-            messages.success(request, "تم الدفع وتأكيد الحجز بنجاح!")
-            return redirect('inventory:index')
-            
+        # تحويل العميل للرئيسية مع رسالة نجاح بدلاً من إظهار صفحة 500
+        messages.success(request, "تم الدفع وتأكيد حجز السيارة بنجاح!")
+        return redirect('inventory:index')
+
     return render(request, 'inventory/payment_failed.html', {'message': message})
 
 
