@@ -8,4 +8,4 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 # 🌟 إنشاء حساب الأدمن تلقائياً إن لم يكن موجوداً
-python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', '123456')"
+python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); u, created = User.objects.get_or_create(username='admin', defaults={'email': 'admin@example.com'}); u.set_password('123456'); u.is_staff = True; u.is_superuser = True; u.save()"
