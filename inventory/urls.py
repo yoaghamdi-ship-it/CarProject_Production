@@ -19,4 +19,5 @@ urlpatterns = [
     path('car/<int:car_id>/comment', views.add_comment, name='add_comment_no_slash'),
     path('car/<int:car_id>/comment/', views.add_comment, name='add_comment'),
     path('comments/', views.AllCommentsView.as_view(), name='all_comments'),
+    path('my-cars/', views.my_cars, name='my_cars'),
 ]

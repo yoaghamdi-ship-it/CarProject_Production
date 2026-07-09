@@ -4,8 +4,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from inventory import views as inventory_views
+from inventory.views import car_list
 
 urlpatterns = [
+    path('', car_list, name='home'),
     # 1. لوحة التحكم الإدارية
     path('admin/', admin.site.urls),
     

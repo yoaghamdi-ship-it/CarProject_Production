@@ -386,3 +386,9 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
+
+# صفحة لوحة تحكم المعرض (عرض السيارات الخاصة بالحساب الحالي فقط)
+@login_required(login_url='login')
+def my_cars(request):
+    cars = Car.objects.filter(owner=request.user).order_by('-id')
+    return render(request, 'inventory/my_cars.html', {'cars': cars})
