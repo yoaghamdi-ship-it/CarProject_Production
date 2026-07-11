@@ -57,7 +57,7 @@
 
                 <div class="d-flex align-items-center gap-2">
                     {% if user.is_authenticated and user.is_staff %}
-                        <a href="/add/" class="btn btn-warning font-weight-bold px-3 me-2" style="box-shadow: 0 0 10px rgba(255,193,7,0.6);">
+                        <a href="{% url 'add_car' %}" class="btn btn-warning font-weight-bold px-3 me-2" style="box-shadow: 0 0 10px rgba(255,193,7,0.6);">
                             ➕ أضف سيارة جديدة
                         </a>
                         <a href="{% url 'admin:index' %}" class="btn btn-outline-light btn-sm me-2">لوحة التحكم</a>
