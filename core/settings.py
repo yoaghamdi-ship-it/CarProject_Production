@@ -111,22 +111,21 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+# تعليق أو إزالة هذا السطر لمنع تحذير المجلد غير الموجود
+# STATICFILES_DIRS = [ BASE_DIR / 'static' ]
 
-# استخدام CompressedStaticFilesStorage بدلاً من Manifest لمنع خطأ MissingFileError
+# استخدام StaticFilesStorage التلقائي لتجنب أخطاء الضغط والملفات المفقودة
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",
     },
 }
 
-# المتغير المباشر للتوافق مع المكتبات القديمة
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+# المتغير القديم المباشر لتوافق مكتبة Cloudinary
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
 
 # تهيئة Cloudinary لصور السيارات
 cloudinary.config( 
