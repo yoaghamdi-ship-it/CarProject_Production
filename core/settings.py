@@ -40,11 +40,10 @@ INSTALLED_APPS = [
 
 # 3. البرمجيات الوسيطة (Middleware) مع إضافة WhiteNoise للملفات الثابتة
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- إضافة مهمة لإظهار CSS لوحة التحكم
-    'django.middleware.common.CommonMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 إضافة هذا السطر هنا ضرورية جداً
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
