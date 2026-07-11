@@ -111,7 +111,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# إعداد خزين Django 6 لتقسيم الصور (Cloudinary) والتنسيقات (WhiteNoise)
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# القاموس الحديث لإدارة التخزين في Django 6
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -120,6 +124,9 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+# ⚠️ مهم جداً لمكتبة Cloudinary القديمة لتجنب AttributeError:
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # تهيئة Cloudinary لصور السيارات
 cloudinary.config( 
@@ -137,7 +144,6 @@ CLOUDINARY_STORAGE = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
 
 # 9. إعدادات نظام طبقات القنوات (Channels)
 CHANNEL_LAYERS = {
