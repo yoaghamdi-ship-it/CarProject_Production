@@ -115,18 +115,18 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# القاموس الحديث لإدارة التخزين في Django 6
+# استخدام CompressedStaticFilesStorage بدلاً من Manifest لمنع خطأ MissingFileError
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
-# ⚠️ مهم جداً لمكتبة Cloudinary القديمة لتجنب AttributeError:
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# المتغير المباشر للتوافق مع المكتبات القديمة
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # تهيئة Cloudinary لصور السيارات
 cloudinary.config( 
