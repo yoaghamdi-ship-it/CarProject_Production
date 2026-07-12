@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib import messages as django_messages 
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
@@ -392,3 +392,7 @@ def register(request):
 def my_cars(request):
     cars = Car.objects.filter(owner=request.user).order_by('-id')
     return render(request, 'inventory/my_cars.html', {'cars': cars})
+
+def admin_logout_view(request):
+    logout(request)
+    return redirect('/admin/login/')

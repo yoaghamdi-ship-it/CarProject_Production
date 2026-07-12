@@ -4,10 +4,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from inventory import views as inventory_views
-from inventory.views import car_list
+from inventory.views import car_list, admin_logout_view
 
 urlpatterns = [
     path('', car_list, name='home'),
+
+    path('admin/logout/', admin_logout_view, name='admin_logout'),
+
     # 1. لوحة التحكم الإدارية
     path('admin/', admin.site.urls),
     
