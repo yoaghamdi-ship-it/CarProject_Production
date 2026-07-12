@@ -105,22 +105,22 @@ TIME_ZONE = 'Asia/Riyadh'
 USE_I18N = True
 USE_TZ = True
 
-# 8. إعدادات الملفات الثابتة (WhiteNoise) والوسائط (Cloudinary)
+# 8. إعدادات الملفات الثابتة والوسائط
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# استخدام إعداد STORAGES الموحد الحديث لـ Django 4.2+
+# المتغير القديم المباشر لتوافق مكتبة django-cloudinary-storage
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+# إعداد STORAGES الموحد لـ Django
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # 👈 يضمن ضغط الملفات وتسريعها دون إظهار أخطاء للملفات المفقودة
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
-
-# ⚠️ قم بحذف أو التعليق على سطر STATICFILES_STORAGE القديم لمنع التضارب:
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # تهيئة Cloudinary لصور السيارات
 cloudinary.config( 
