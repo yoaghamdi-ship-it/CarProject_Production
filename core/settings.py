@@ -109,16 +109,16 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# المتغير القديم المباشر لتوافق مكتبة django-cloudinary-storage
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# تعيين محرك WhiteNoise المباشر لتجنب أخطاء ضغط الملفات المفقودة
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
-# إعداد STORAGES الموحد لـ Django
+# إعداد STORAGES لـ Django الحديث
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.StaticFilesStorage", # 👈 تغيير المحرك هنا أيضاً
     },
 }
 
