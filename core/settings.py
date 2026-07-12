@@ -100,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # 7. إعدادات اللغة والوقت
-LANGUAGE_CODE = 'ar'
+LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Riyadh'
 USE_I18N = True
 USE_TZ = True
