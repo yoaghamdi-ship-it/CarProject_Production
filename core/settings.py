@@ -30,9 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
-    'django.contrib.staticfiles',
-    'cloudinary_storage',
+    'django.contrib.staticfiles',  # 👈 1. staticfiles أولاً لخدمة الـ Admin
+    'cloudinary_storage',          # 👈 2. cloudinary_storage واحدة فقط بعد staticfiles
     'cloudinary',
     'rest_framework',    
     'inventory',  # تطبيق السيارات الخاص بك
