@@ -124,7 +124,7 @@ STORAGES = {
 }
 
 # المتغير القديم المباشر لتوافق مكتبة Cloudinary
-STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # تهيئة Cloudinary لصور السيارات
 cloudinary.config( 
