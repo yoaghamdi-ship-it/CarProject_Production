@@ -15,7 +15,7 @@
 
     <nav class="navbar navbar-dark bg-primary mb-5 shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'car_list' %}">🚗 العودة للمعرض</a>
+            <a class="navbar-brand fw-bold" href="{% url 'inventory:car_list' %}">🚗 العودة للمعرض</a>
         </div>
     </nav>
 
@@ -51,7 +51,7 @@
 
                             <div class="d-grid mt-4">
                                 <button type="submit" class="btn btn-primary btn-save shadow">حفظ السيارة ونشرها الآن</button>
-                                <a href="{% url 'car_list' %}" class="btn btn-link text-muted mt-2">إلغاء والعودة</a>
+                                <a href="{% url 'inventory:car_list' %}" class="btn btn-link text-muted mt-2">إلغاء والعودة</a>
                             </div>
                         </form>
                     </div>

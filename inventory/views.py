@@ -177,14 +177,14 @@ class AllCommentsView(TemplateView):
 
 
 # 6. إضافة سيارة (محمية للمسؤولين فقط)
-@user_passes_test(lambda u: u.is_authenticated and (u.is_staff or u.is_superuser), login_url='car_list')
+@user_passes_test(lambda u: u.is_authenticated and (u.is_staff or u.is_superuser), login_url='inventory:index')
 def add_car(request):
     if request.method == "POST":
         form = CarForm(request.POST, request.FILES)
         if form.is_valid():
             car = form.save()
             django_messages.success(request, f"تم إضافة السيارة {car.brand} بنجاح!")
-            return redirect('car_list')
+            return redirect('inventory:car_list')
     else:
         form = CarForm()
     return render(request, 'inventory/add_car.html', {'form': form, 'user': request.user})
