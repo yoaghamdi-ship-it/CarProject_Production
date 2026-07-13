@@ -21,6 +21,9 @@ logger = logging.getLogger(__name__)
 from .models import Inventory, Comment, Favorite, Message, Booking, Car
 from .forms import CarForm
 
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+
 # --- إعدادات ميسر ---
 MOYASAR_SECRET_KEY = "sk_test_4qRHE1RTQwrEh3gh9H7cxb4LkbJWDMTJtP6ngp3s"
 MOYASAR_PUBLISHABLE_KEY = "pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3"
@@ -396,3 +399,7 @@ def my_cars(request):
 def admin_logout_view(request):
     logout(request)
     return redirect('/admin/login/')
+
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+    next_page = reverse_lazy('home')  # 👈 أو اسم الـ URL الخاص بالصفحة الرئيسية لديك

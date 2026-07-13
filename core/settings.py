@@ -164,3 +164,9 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_SAVE_EVERY_REQUEST = True
+
+# الوجهة التي يُنقل إليها المستخدم بعد تسجيل الدخول بنجاح
+LOGIN_REDIRECT_URL = '/'  # 👈 المسار '/' يعني الصفحة الرئيسية
+
+# الوجهة التي يُنقل إليها المستخدم بعد تسجيل الخروج
+LOGOUT_REDIRECT_URL = '/'
