@@ -398,7 +398,7 @@ def my_cars(request):
 
 def admin_logout_view(request):
     logout(request)
-    return redirect('/admin/login/')
+    return redirect('inventory:index')
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'

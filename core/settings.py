@@ -165,8 +165,8 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
-# الوجهة التي يُنقل إليها المستخدم بعد تسجيل الدخول بنجاح
-LOGIN_REDIRECT_URL = '/'  # 👈 المسار '/' يعني الصفحة الرئيسية
+# التوجيه الافتراضي بعد تسجيل الدخول للرئيسية
+LOGIN_REDIRECT_URL = 'inventory:index'
 
-# الوجهة التي يُنقل إليها المستخدم بعد تسجيل الخروج
-LOGOUT_REDIRECT_URL = '/'
+# التوجيه الافتراضي بعد تسجيل الخروج للرئيسية
+LOGOUT_REDIRECT_URL = 'inventory:index'
