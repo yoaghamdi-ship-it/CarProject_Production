@@ -32,28 +32,19 @@ MOYASAR_PUBLISHABLE_KEY = "pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3"
 # 🔥 دالة المراقبة الذكية المساعدة (تُستدعى تلقائياً لتحديث الحالات بالخلفية)
 def check_expired_bookings():
     now = timezone.now()
-    
-    # 1. جلب الحجوزات النشطة
     active_bookings = Booking.objects.filter(status__in=['pending', 'paid'])
     
     for booking in active_bookings:
         expired = False
-        
-        # حالة الـ 24 ساعت قبل دفع العربون
         if booking.status == 'pending' and now > booking.reserved_at + timedelta(hours=24):
             expired = True
-            
-        # حالة الـ 48 ساعة بعد دفع العربون وقبل دفع كامل المبلغ
         elif booking.status == 'paid' and booking.deposit_paid_at:
             if now > booking.deposit_paid_at + timedelta(hours=48):
                 expired = True
                 
-        # إذا انتهت المهلة، نفذ الإلغاء فوراً هنا
         if expired:
             booking.status = 'expired'
             booking.save()
-            
-            # إعادة السيارة لتكون متاحة للبيع والعرض
             car = booking.car
             car.status = 'available'
             car.is_available = True
@@ -64,13 +55,11 @@ def check_expired_bookings():
 def index(request):
     cars = Car.objects.all()
     
-    # فحص الحجوزات لكل السيارات
     for car in cars:
         car.is_already_booked = Booking.objects.filter(car=car, status='paid').exists()
     
     ticker_cars = [car for car in cars if not car.is_already_booked]
 
-    # 🌟 مزامنة وإجبار الداتابيز على تفعيل الألوان الحمراء في المتصفح فوراً
     if request.user.is_authenticated:
         if 'wishlist_cars' not in request.session or not request.session['wishlist_cars']:
             favorites = Favorite.objects.filter(user=request.user)
@@ -84,10 +73,8 @@ def index(request):
                 else:
                     favorite_car_ids.append(fav.inventory_id)
             
-            # تخزين الأرقام الحقيقية المعزولة داخل السيسشن
             request.session['wishlist_cars'] = favorite_car_ids
             
-        # 🌟 السطر الحاسم: إجبار دجانغو على تحديث وحفظ الجلسة وإرسالها للـ HTML فوراً
         request.session.modified = True
     else:
         request.session['wishlist_cars'] = []
@@ -126,15 +113,11 @@ def car_list(request):
 # 3. تفاصيل السيارة
 def car_detail(request, car_id):
     car = get_object_or_404(Car, id=car_id)
-    
-    # حفظ رقم السيارة الحالية في الـ Session لكي تستخدمه دالة الـ callback بعد الدفع
     request.session['pending_car_id'] = car.id
     
-    # جلب التعليقات المرتبطة بالـ Inventory التابع لهذه السيارة إن وجد
     inventory_item = Inventory.objects.filter(inventory_cars=car).first()
     comments = inventory_item.comments.all() if inventory_item else []
     
-    # فحص ما إذا كانت السيارة محجوزة حجزاً مؤكداً مدفوعاً
     is_booked = car.status == 'booked' or Booking.objects.filter(car=car, status='paid').exists()
     
     context = {
@@ -166,7 +149,7 @@ def add_comment(request, car_id):
     return redirect('inventory:car_detail', car_id=car.id)
 
 
-# 5. عرض كافة التعليقات كـ Class-based View ليتطابق مع ملف الروابط
+# 5. عرض كافة التعليقات كـ Class-based View
 class AllCommentsView(TemplateView):
     template_name = 'inventory/all_comments.html'
 
@@ -176,7 +159,7 @@ class AllCommentsView(TemplateView):
         return context
 
 
-# 6. إضافة سيارة (محمية للمسؤولين فقط)
+# 6. إضافة سيارة (محمية للمسؤولين فقط مع توجيه آمن)
 @user_passes_test(lambda u: u.is_authenticated and (u.is_staff or u.is_superuser), login_url='inventory:index')
 def add_car(request):
     if request.method == "POST":
@@ -191,41 +174,33 @@ def add_car(request):
 
 
 # 7. إجراءات الحجز المبدئي وتحضير الجلسة
-@login_required
+@login_required(login_url='inventory:login') # 👈 توجيه المشتري لصفحة الدخول إن لم يكن مسجلاً
 def book_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
+    # التأكد من عدم حجز السيارة مسبقاً
     if Booking.objects.filter(car=car, status='paid').exists():
-        messages.error(request, "عذراً، هذه السيارة محجوزة حالياً من قبل عميل آخر.")
+        messages.error(request, "عذراً، هذه السيارة محجوزة حالياً.")
         return redirect('inventory:index')
 
     deposit_amount = 1000 
-    
-    # تثبيت بيانات الحجز الفوري في الجلسة لضمان استرجاعها بعد الدفع
     request.session['pending_car_id'] = car.id
     request.session['deposit_amount'] = deposit_amount
     request.session.modified = True
 
+    # إنشاء حجز بانتظار السداد
     booking, created = Booking.objects.get_or_create(
         user=request.user,
         car=car,
         status='pending', 
-        defaults={
-            'amount_paid': deposit_amount,
-        }
+        defaults={'amount_paid': deposit_amount}
     )
     
-    if not created:
-        booking.amount_paid = deposit_amount
-        booking.status = 'pending'
-        booking.save()
-
-    messages.info(request, f"تم تجهيز طلب حجز سيارة {car.brand}. يرجى سداد عربون التأكيد (1000 ريال).")
-    
+    messages.info(request, f"تم تحضير طلب الحجز. يرجى إتمام سداد العربون.")
     return redirect('inventory:car_detail', car_id=car.id)
 
 
-# 8. معالجة نجاح الدفع وعرض الفاتورة (مؤمنة 100% من الـ None والـ 500)
+# 8. معالجة نجاح الدفع وعرض الفاتورة
 def payment_success(request, booking_id):
     try:
         booking = get_object_or_404(Booking, id=booking_id)
@@ -240,41 +215,32 @@ def payment_success(request, booking_id):
         return redirect('inventory:index')
 
 
-# 9. استقبال رد بوابة الدفع ميسر (مُعاد صياغتها بالكامل لحل معضلة الـ IntegrityError)
+# 9. استقبال رد بوابة الدفع ميسر
 def payment_callback(request):
     payment_id = request.GET.get('id')
     status = request.GET.get('status')
     message = request.GET.get('message')
-    
-    # جلب رقم السيارة من الجلسة
     car_id = request.session.get('pending_car_id')
     
     try:
         if status == 'paid':
-            # إذا لم يتم العثور على car_id في الجلسة، نحاول البحث عن آخر حجز معلق
             if not car_id:
                 booking = Booking.objects.filter(status='pending').order_by('-id').first()
-                if booking:
-                    car = booking.car
-                else:
-                    car = None
+                car = booking.car if booking else None
             else:
                 car = Car.objects.filter(id=car_id).first()
             
             if car:
-                # 1. تحديث حالة السيارة
                 car.status = 'booked'
                 car.is_available = False
                 car.save()
                 
-                # 2. تحديث أو إنشاء سجل الحجز
                 booking = Booking.objects.filter(car=car, status='pending').last()
                 if booking:
                     booking.status = 'paid'
                     booking.deposit_paid_at = timezone.now()
                     booking.save()
                 else:
-                    # نستخدم حساب المستخدم إذا كان موثقاً، أو المالك الأخير للحجز
                     user = request.user if request.user.is_authenticated else None
                     if not user:
                         last_b = Booking.objects.filter(car=car).last()
@@ -288,18 +254,11 @@ def payment_callback(request):
                         deposit_paid_at=timezone.now()
                     )
                 
-                # مسح الجلسة
                 request.session.pop('pending_car_id', None)
-                
-                # التوجيه لصفحة النجاح
                 return redirect('inventory:payment_success', booking_id=booking.id)
                 
     except Exception as e:
-        # طباعة الخطأ في سجلات Render لمعرفته بدقة إذا حدثت أي مشكلة
-        print(f"CRITICAL PAYMENT CALLBACK ERROR: {str(e)}")
         logger.error(f"Payment callback failed: {str(e)}")
-        
-        # تحويل العميل للرئيسية مع رسالة نجاح بدلاً من إظهار صفحة 500
         messages.success(request, "تم الدفع وتأكيد حجز السيارة بنجاح!")
         return redirect('inventory:index')
 
@@ -390,16 +349,26 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
 
-# صفحة لوحة تحكم المعرض (عرض السيارات الخاصة بالحساب الحالي فقط)
+
+# 13. صفحة لوحة تحكم المعرض
 @login_required(login_url='login')
 def my_cars(request):
     cars = Car.objects.filter(owner=request.user).order_by('-id')
     return render(request, 'inventory/my_cars.html', {'cars': cars})
 
+
+# 🔒 14. دالة تسجيل الخروج الآمنة وتدمير الجلسة تماماً (تغطي ثغرة البقاء مسجلاً)
 def admin_logout_view(request):
     logout(request)
-    return redirect('inventory:index')
+    request.session.flush()  # 👈 تدمير كافة الكوكيز والجلسة تماماً لمنع بقاء حساب الأدمن متصلاً
+    response = redirect('inventory:index')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
+
+# 🔒 15. كلاس تسجيل الدخول المعدل لمنع التوجيه الخاطئ لـ /admin/
 class CustomLoginView(LoginView):
     template_name = 'login.html'
-    next_page = reverse_lazy('home')  # 👈 أو اسم الـ URL الخاص بالصفحة الرئيسية لديك
+    next_page = reverse_lazy('inventory:index')  # 👈 توجيه مباشر للصفحة الرئيسية للمشروع

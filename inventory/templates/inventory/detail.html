@@ -4,7 +4,6 @@
 {% block content %}
 <div class="container my-5">
     <div class="row">
-        <!-- قسم تفاصيل السيارة (الصور والبيانات) -->
         <div class="col-md-7">
             <h1 class="fw-bold text-dark mb-2">{{ car.brand }} {{ car.model_name }}</h1>
             <p class="text-muted fs-5 mb-4">موديل: {{ car.year }} | العائلة: {{ car.get_category_display }}</p>
@@ -29,12 +28,10 @@
             </table>
         </div>
 
-        <!-- قسم الحجز وبوابة الدفع -->
         <div class="col-md-5">
             <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
                 <div class="card-body p-4">
                     
-                    <!-- 1️⃣ إذا كانت السيارة مَحجوزة بالعربون -->
                     {% if is_booked %}
                         
                         <div class="text-center py-4">
@@ -50,11 +47,10 @@
                             <button class="btn btn-secondary btn-lg w-100 mt-2" disabled>
                                 غير متاحة للحجز حالياً
                             </button>
-                            <a href="{% url 'index' %}" class="btn btn-outline-primary w-100 mt-2">العودة للرئيسية وتصفح سيارات أخرى</a>
+                            <a href="{% url 'inventory:index' %}" class="btn btn-outline-primary w-100 mt-2">العودة للرئيسية وتصفح سيارات أخرى</a>
                         </div>
 
-                    <!-- 2️⃣ إذا كانت السيارة متاحة وغير محجوزة -->
-                    {% else %}
+                    {% elif user.is_authenticated %}
                         
                         <h4 class="fw-bold text-dark mb-2">تأكيد الحجز الفوري</h4>
                         <p class="text-muted small mb-4">سيتم سحب مبلغ <b>1,000 ريال فقط</b> كعربون مسترد لتأمين السيارة لحسابك.</p>
@@ -63,18 +59,14 @@
                             <p class="small text-muted mb-0"><i class="bi bi-shield-check text-success"></i> بوابة دفع ميسر آمنة ومشفرة</p>
                         </div>
                         
-                        <!-- حاوية الدفع القياسية البسيطة -->
                         <div class="mysr-form"></div>
 
-                        <!-- استدعاء ملفات ميسر الأساسية فقط والأمنة بنسبة 100% -->
                         <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.12.0/moyasar.css" />
                         <script src="https://cdn.moyasar.com/mpf/1.12.0/moyasar.js" defer></script>
 
-                        <!-- السكربت التنفيذي محمي بانتظار تحميل نافذة المتصفح بالكامل -->
                         <script>
                           window.addEventListener('load', function () {
                             try {
-                              // توليد الرابط بشكل ديناميكي ليعمل على المضيف المحلي وعلى Render تلقائياً
                               var currentOrigin = window.location.origin;
 
                               Moyasar.init({
@@ -83,7 +75,7 @@
                                 currency: 'SAR',
                                 description: 'عربون حجز سيارة: {{ car.brand }} {{ car.model_name }}',
                                 publishable_api_key: 'pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3',
-                                callback_url: window.location.origin + "{% url 'payment_callback' %}",
+                                callback_url: window.location.origin + "{% url 'inventory:payment_callback' %}",
                                 methods: ['creditcard', 'stcpay'],
                                 
                                 on_completed: function (payment) {
@@ -96,6 +88,28 @@
                           });
                         </script>
 
+                    {% else %}
+
+                        <div class="text-center py-4">
+                            <div class="display-4 text-primary mb-3">
+                                <i class="bi bi-person-bounding-box"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-3">احجز هذه السيارة بـ 1,000 ريال فقط</h5>
+                            
+                            <p class="text-muted small mb-4">
+                                لتتمكن من دفع العربون وتأكيد حجز السيارة فوراً باسمك، يجب تسجيل الدخول إلى حسابك أولاً.
+                            </p>
+
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'inventory:login' %}?next={{ request.path }}" class="btn btn-primary btn-lg fw-bold">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> تسجيل الدخول للحجز
+                                </a>
+                                <a href="{% url 'inventory:register' %}" class="btn btn-outline-secondary">
+                                    إنشاء حساب جديد
+                                </a>
+                            </div>
+                        </div>
+
                     {% endif %}
 
                 </div>
@@ -103,32 +117,25 @@
         </div>
     </div>
 
-    <!-- قسم التعليقات المحدث -->
     <div class="row mt-5">
         <div class="col-md-7">
-            <!-- فورم كتابة تعليق جديد (يظهر دائماً إذا كان المستخدم مسجل دخول) -->
             {% if user.is_authenticated %}
                 <div class="card mb-4 border-0 shadow-sm">
                     <div class="card-body">
                         <h5 class="fw-bold mb-3">أضف رأيك حول هذه السيارة</h5>
                         <form action="{% url 'inventory:add_comment' car.id %}" method="POST">
                             {% csrf_token %}
-    
-                            <!-- مربع النص للتعليق -->
                             <textarea name="content" class="form-control" placeholder="اكتب تعليقك هنا..." required></textarea>
-                                
-                            <!-- زر الإرسال -->
                             <button type="submit" class="btn btn-primary mt-2">إرسال التعليق</button>
                         </form>
                     </div>
                 </div>
             {% else %}
                 <div class="alert alert-info mb-4" style="font-size: 0.95rem;">
-                    يرجى <a href="{% url 'login' %}" class="fw-bold">تسجيل الدخول</a> لتتمكن من إضافة تعليقك على السيارة.
+                    يرجى <a href="{% url 'inventory:login' %}?next={{ request.path }}" class="fw-bold">تسجيل الدخول</a> لتتمكن من إضافة تعليقك على السيارة.
                 </div>
             {% endif %}
 
-            <!-- عرض التعليقات السابقة إن وجدت -->
             <h4 class="fw-bold mb-3">آراء العملاء حول هذه السيارة</h4>
             {% if comments %}
                 {% for comment in comments %}

@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 app_name = 'inventory'
@@ -21,4 +22,8 @@ urlpatterns = [
     path('car/<int:car_id>/comment/', views.add_comment, name='add_comment'),
     path('comments/', views.AllCommentsView.as_view(), name='all_comments'),
     path('my-cars/', views.my_cars, name='my_cars'),
+
+    path('register/', views.register, name='register'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', views.admin_logout_view, name='logout'),
 ]
