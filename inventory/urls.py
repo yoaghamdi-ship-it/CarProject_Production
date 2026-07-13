@@ -6,6 +6,7 @@ app_name = 'inventory'
 urlpatterns = [
     # 1. الصفحة الرئيسية وتفاصيل السيارة
     path('', views.index, name='index'),
+    path('cars/', views.index, name='car_list'),
     path('car/<int:car_id>/', views.car_detail, name='car_detail'),
     
     # 2. الحجز والدفع والإضافة
