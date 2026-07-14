@@ -370,5 +370,5 @@ def admin_logout_view(request):
 
 # 🔒 15. كلاس تسجيل الدخول المعدل لمنع التوجيه الخاطئ لـ /admin/
 class CustomLoginView(LoginView):
-    template_name = 'login.html'
-    next_page = reverse_lazy('inventory:index')  # 👈 توجيه مباشر للصفحة الرئيسية للمشروع
+    template_name = 'registration/login.html'
+    next_page = reverse_lazy('inventory:index')
