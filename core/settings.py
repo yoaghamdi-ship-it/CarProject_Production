@@ -165,8 +165,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
-# التوجيه الافتراضي بعد تسجيل الدخول للرئيسية
+# التوجيه المباشر للصفحة الرئيسية للتطبيق بعد الدخول أو الخروج
 LOGIN_REDIRECT_URL = 'inventory:index'
-
-# التوجيه الافتراضي بعد تسجيل الخروج للرئيسية
 LOGOUT_REDIRECT_URL = 'inventory:index'
+LOGIN_URL = 'inventory:login'

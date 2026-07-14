@@ -8,9 +8,7 @@
     <title>{% block title %}معرض السيارات{% endblock %}</title>
     
     <link class="rtl-sheet" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
-    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -33,7 +31,6 @@
             position: relative;
             width: 100%;
             height: 100%;
-            /* نترك مساحة في اليمين حتى لا يمر النص المتحرك خلف العنوان الثابت */
             padding-right: 175px; 
         }
         .ticker-title {
@@ -52,7 +49,6 @@
             padding-left: 50%;
             animation: ticker-move 30s linear infinite;
         }
-        /* إيقاف الحركة مؤقتاً عند تمرير الماوس لتسهيل الض روابط */
         .ticker-content:hover {
             animation-play-state: paused;
         }
@@ -71,7 +67,6 @@
             display: inline-block;
         }
 
-        /* الحركات التعبيرية (Animations) */
         @keyframes ticker-move {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-50%, 0, 0); }
@@ -90,7 +85,7 @@
         }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     {% if request.path == '/' and cheapest_cars %}
     <div class="offer-bar shadow-sm overflow-hidden">
@@ -108,7 +103,7 @@
                             أرخص سيارة <strong>{{ car.brand }}</strong> متوفرة هي ({{ car.model_name }}) بسعر: 
                             <span class="badge-price mx-2">{{ car.price }} ريال</span>
                             {% if car.id %}
-                                <a href="{% url 'car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
+                                <a href="{% url 'inventory:car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
                                     اغتنمها <i class="fas fa-angle-left"></i>
                                 </a>
                             {% endif %}
@@ -122,7 +117,7 @@
                             أرخص سيارة <strong>{{ car.brand }}</strong> متوفرة هي ({{ car.model_name }}) بسعر: 
                             <span class="badge-price mx-2">{{ car.price }} ريال</span>
                             {% if car.id %}
-                                <a href="{% url 'car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
+                                <a href="{% url 'inventory:car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
                                     اغتنمها <i class="fas fa-angle-left"></i>
                                 </a>
                             {% endif %}
@@ -138,7 +133,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'index' %}">
+            <a class="navbar-brand text-warning" href="{% url 'inventory:index' %}">
                 <i class="fas fa-car me-2"></i> معرض السيارات
             </a>
             
@@ -149,7 +144,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="{% url 'index' %}">
+                        <a class="nav-link text-white" href="{% url 'inventory:index' %}">
                             <i class="fas fa-home me-1 text-secondary"></i> الرئيسية
                         </a>
                     </li>
@@ -183,28 +178,32 @@
                         {% endif %}
 
                         <div class="dropdown">
-                            <button class="btn btn-outline-light dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i> {{ user.username }}
+                            <button class="btn btn-outline-light dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user me-1 text-warning"></i> {{ user.username }}
+                                {% if user.is_staff %}<span class="badge bg-danger ms-1">Staff</span>{% endif %}
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end text-end">
+                            <ul class="dropdown-menu dropdown-menu-end text-end shadow">
                                 {% if user.is_staff %}
-                                    <li><a class="dropdown-menu-item dropdown-item small text-secondary" href="{% url 'admin:index' %}" target="_blank">لوحة الإدارة</a></li>
+                                    <li><a class="dropdown-item small text-secondary" href="{% url 'admin:index' %}" target="_blank"><i class="fas fa-cog me-1"></i> لوحة الإدارة</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
                                 <li>
-                                    <!-- زر تسجيل الخروج الصحيح والمتوافق مع Django الحديث -->
-                                    <form action="{% url 'logout' %}" method="POST" class="d-inline">
+                                    <form action="{% url 'inventory:logout' %}" method="POST" class="d-inline w-100">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-link text-danger p-0 m-0 align-baseline" style="text-decoration: none;">
-                                            تسجيل الخروج
+                                        <button type="submit" class="dropdown-item text-danger border-0 bg-transparent">
+                                            <i class="fas fa-sign-out-alt me-1"></i> تسجيل الخروج
                                         </button>
                                     </form>
                                 </li>
                             </ul>
                         </div>
                     {% else %}
-                        <a href="/accounts/login/" class="btn btn-outline-light btn-sm me-2">دخول</a>
-                        <a href="{% url 'register' %}" class="btn btn-primary btn-sm">حساب جديد</a>
+                        <a href="{% url 'inventory:login' %}" class="btn btn-outline-light btn-sm me-2">
+                            <i class="fas fa-sign-in-alt me-1"></i> دخول
+                        </a>
+                        <a href="{% url 'inventory:register' %}" class="btn btn-warning btn-sm fw-bold text-dark">
+                            حساب جديد
+                        </a>
                     {% endif %}
                 </div>
             </div>
@@ -213,24 +212,24 @@
 
     <div class="container mt-3">
         {% if messages %}
-            {% if forloop.counter <= 5 %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-end" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show text-end shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
         {% endif %}
     </div>
 
-    <main class="container my-5">
+    <main class="container my-4 flex-grow-1">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="bg-dark text-white text-center py-4 mt-5">
-        <p>جميع الحقوق محفوظة &copy; 2026</p>
+    <footer class="bg-dark text-white text-center py-4 mt-auto border-top border-secondary">
+        <div class="container">
+            <p class="mb-0 small text-muted">جميع الحقوق محفوظة &copy; {% now "Y" %} - معرض السيارات</p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
