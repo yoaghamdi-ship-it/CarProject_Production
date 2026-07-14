@@ -2,39 +2,23 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth import views as auth_views
 from inventory import views as inventory_views
-from inventory.views import car_list, admin_logout_view
 
 urlpatterns = [
-    path('', car_list, name='home'),
-
-    path('admin/logout/', admin_logout_view, name='admin_logout'),
-
-    # 1. لوحة التحكم الإدارية
+    # 1. لوحة تحكم الأدمن والمسؤولين فقط
     path('admin/', admin.site.urls),
-    
-    # 2. الصفحة الرئيسية المباشرة للموقع
-    path('', inventory_views.index, name='index'), 
-    
-    # 🌟 التضمين السليم والوحيد لتطبيق الـ inventory (يمنع أي تضارب أو أخطاء)
-    path('', include('inventory.urls')),
-    path('messages/', inventory_views.messages_view, name='messages'),
-    #path('comments/', include('comments.urls')),
-    
-    # 3. روابط الحماية الجاهزة وتسجيل الدخول/الخروج والتسجيل
-    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('accounts/register/', inventory_views.register, name='register'),
 
-    # 4. روابط نظام "نسيت كلمة السر" العامة
-    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    # 2. تضمين كافة روابط تطبيق inventory (يشمل الصفحة الرئيسية، تسجيل الدخول، التسجيل، والحجز)
+    path('', include('inventory.urls')),
+
+    # 3. روابط مستقلة إضافية (إن وجدت)
+    path('messages/', inventory_views.messages_view, name='messages'),
     path('payment/callback/', inventory_views.payment_callback, name='payment_callback'),
 ]
 
-# 5. دعم ملفات الصور (Media) والثابتة
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# 4. دعم رفع ملفات الصور والملفات الثابتة
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+else:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
