@@ -26,4 +26,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.admin_logout_view, name='logout'),
+    path('payment/callback/', views.payment_callback, name='payment_callback'),
 ]
