@@ -346,7 +346,7 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'تم إنشاء الحساب بنجاح للمستخدم {username}! يمكنك الآن تسجيل الدخول.')
-            return redirect('login')
+            return redirect('inventory:login')
     else:
         form = UserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
