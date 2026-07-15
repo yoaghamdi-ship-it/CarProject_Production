@@ -1,0 +1,97 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}لوحة المتابعة والردود{% endblock %}
+
+{% block content %}
+<div class="container my-5 text-end">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="fw-bold text-dark"><i class="fas fa-tasks text-warning me-2"></i> لوحة المتابعة والردود (خاص بالإدارة)</h2>
+            <p class="text-muted">هنا يمكنك متابعة التعليقات والرسائل المعلقة والرد عليها مباشرة.</p>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills mb-4 gap-2 justify-content-start" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active bg-dark text-white border" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab">
+                <i class="fas fa-comments me-1 text-warning"></i> تعليقات بانتظار الرد 
+                <span class="badge bg-danger ms-1">{{ pending_comments.count }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link bg-dark text-white border" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab">
+                <i class="fas fa-envelope me-1 text-warning"></i> رسائل بانتظار الرد 
+                <span class="badge bg-danger ms-1">{{ pending_messages.count }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="adminTabsContent">
+        <div class="tab-pane fade show active" id="comments" role="tabpanel">
+            {% if pending_comments %}
+                <div class="row g-3">
+                    {% for comment in pending_comments %}
+                        <div class="col-12">
+                            <div class="card shadow-sm border-0 border-start border-warning border-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="card-title text-primary mb-0"><i class="fas fa-user-circle me-1"></i> {{ comment.user.username }}</h5>
+                                        <span class="badge bg-secondary">{{ comment.created_at|date:"Y-m-d H:i" }}</span>
+                                    </div>
+                                    <p class="text-muted mb-1"><strong>على الوكيل:</strong> {{ comment.inventory.name }}</p>
+                                    <p class="card-text bg-light p-3 rounded mb-3">" {{ comment.text }} "</p>
+                                    
+                                    <form action="{% url 'inventory:reply_comment' comment.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <input type="text" name="reply_text" class="form-control" placeholder="اكتب رد الإدارة هنا..." required>
+                                            <button class="btn btn-warning fw-bold" type="submit">إرسال الرد</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-success text-center">
+                    <i class="fas fa-check-circle me-1"></i> لا توجد تعليقات معلقة! تم الرد على الجميع.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="messages" role="tabpanel">
+            {% if pending_messages %}
+                <div class="row g-3">
+                    {% for msg in pending_messages %}
+                        <div class="col-12">
+                            <div class="card shadow-sm border-0 border-start border-info border-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="card-title text-info mb-0"><i class="fas fa-user me-1"></i> {{ msg.name }} ({{ msg.email }})</h5>
+                                        <span class="badge bg-secondary">{{ msg.created_at|date:"Y-m-d H:i" }}</span>
+                                    </div>
+                                    <h6 class="text-dark mb-2"><strong>الموضوع:</strong> {{ msg.subject }}</h6>
+                                    <p class="card-text bg-light p-3 rounded mb-3">" {{ msg.message }} "</p>
+                                    
+                                    <form action="{% url 'inventory:reply_message' msg.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <input type="text" name="reply_text" class="form-control" placeholder="اكتب رد الإدارة هنا..." required>
+                                            <button class="btn btn-info text-white fw-bold" type="submit">إرسال الرد</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-success text-center">
+                    <i class="fas fa-check-circle me-1"></i> لا توجد رسائل معلقة! تم الرد على الجميع.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

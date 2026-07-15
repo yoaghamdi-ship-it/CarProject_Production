@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout
@@ -374,3 +375,45 @@ def admin_logout_view(request):
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
     next_page = reverse_lazy('inventory:index')
+
+@staff_member_required
+def admin_dashboard(request):
+    """لوحة متابعة الرسائل والتعليقات غير المجاب عليها"""
+    pending_comments = Comment.objects.filter(reply__isnull=True).order_by('-created_at')
+    pending_messages = Message.objects.filter(reply__isnull=True).order_by('-created_at')
+    
+    context = {
+        'pending_comments': pending_comments,
+        'pending_messages': pending_messages,
+    }
+    return render(request, 'inventory/admin_dashboard.html', context)
+
+@staff_member_required
+def reply_comment(request, comment_id):
+    """حفظ رد الموظف على تعليق محدد"""
+    if request.method == "POST":
+        comment = get_object_or_404(Comment, id=comment_id)
+        reply_text = request.POST.get('reply_text', '').strip()
+        if reply_text:
+            comment.reply = reply_text
+            comment.replied_at = timezone.now()
+            comment.save()
+            messages.success(request, "تم تسجيل الرد على التعليق بنجاح.")
+        else:
+            messages.error(request, "لا يمكن إرسال رد فارغ.")
+    return redirect('inventory:admin_dashboard')
+
+@staff_member_required
+def reply_message(request, message_id):
+    """حفظ رد الموظف على رسالة محددة"""
+    if request.method == "POST":
+        msg = get_object_or_404(Message, id=message_id)
+        reply_text = request.POST.get('reply_text', '').strip()
+        if reply_text:
+            msg.reply = reply_text
+            msg.replied_at = timezone.now()
+            msg.save()
+            messages.success(request, "تم تسجيل الرد على الرسالة بنجاح.")
+        else:
+            messages.error(request, "لا يمكن إرسال رد فارغ.")
+    return redirect('inventory:admin_dashboard')

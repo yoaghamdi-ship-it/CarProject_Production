@@ -25,10 +25,17 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="المستخدم")
     text = models.TextField(verbose_name="التعليق")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ التعليق")
+    
+    # 🌟 الحقول الجديدة للرد
+    reply = models.TextField(blank=True, null=True, verbose_name="رد الإدارة")
+    replied_at = models.DateTimeField(blank=True, null=True, verbose_name="تاريخ الرد")
 
     class Meta:
         verbose_name = "تعليق"
         verbose_name_plural = "التعليقات"
+
+    def __str__(self):
+        return f"تعليق من {self.user.username} على {self.inventory.name}"
 
 # 3. موديل المفضلة
 class Favorite(models.Model):
@@ -47,10 +54,17 @@ class Message(models.Model):
     subject = models.CharField(max_length=200, verbose_name="الموضوع")
     message = models.TextField(verbose_name="نص الرسالة")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإرسال")
+    
+    # 🌟 الحقول الجديدة للرد
+    reply = models.TextField(blank=True, null=True, verbose_name="رد الإدارة")
+    replied_at = models.DateTimeField(blank=True, null=True, verbose_name="تاريخ الرد")
 
     class Meta:
         verbose_name = "رسالة"
         verbose_name_plural = "الرسائل"
+
+    def __str__(self):
+        return f"{self.subject} - من: {self.name}"
 
 # 5. تعريف السيارة (يجب أن يكون قبل Booking)
 class Car(models.Model):

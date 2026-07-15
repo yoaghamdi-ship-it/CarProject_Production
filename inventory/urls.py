@@ -32,4 +32,9 @@ urlpatterns = [
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+    # 📊 لوحة المتابعة والردود الخاصة بالـ Staff
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('comment/<int:comment_id>/reply/', views.reply_comment, name='reply_comment'),
+    path('message/<int:message_id>/reply/', views.reply_message, name='reply_message'),
 ]
