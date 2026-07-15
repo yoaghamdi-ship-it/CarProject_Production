@@ -291,15 +291,16 @@ def toggle_wishlist(request, car_id):
 def toggle_favorite(request, car_id):
     return toggle_wishlist(request, car_id)
 
+
 @login_required(login_url='inventory:login')
 def favorites_view(request):
     # 1. محاولة جلب المفضلة من الجلسة (Session) أولاً
     wishlist_session = request.session.get('wishlist_cars', [])
     favorite_cars = Car.objects.filter(id__in=wishlist_session)
     
-    # 2. إذا لم تكن موجودة في الجلسة، نأتي بها من قاعدة البيانات للعميل المسجل
+    # 2. إذا لم تكن موجودة في الجلسة، نأتي بها من قاعدة البيانات بحسب الحقل الصحيح (inventory_id)
     if not favorite_cars.exists():
-        fav_car_ids = Favorite.objects.filter(user=request.user).values_list('car_id', flat=True)
+        fav_car_ids = Favorite.objects.filter(user=request.user).values_list('inventory_id', flat=True)
         favorite_cars = Car.objects.filter(id__in=fav_car_ids)
     
     context = {
