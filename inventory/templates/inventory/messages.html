@@ -15,7 +15,7 @@
                     </h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{% url 'messages' %}" method="post">
+                    <form action="{% url 'inventory:messages' %}" method="post">
                         {% csrf_token %}
                         
                         <!-- حقل الاسم -->
@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <!-- ثانياً: صندوق عرض الرسائل المرسلة مسبقاً -->
+        <!-- ثانياً: صندوق عرض الرسائل المرسلة مسبقاً والردود عليها -->
         <div class="col-md-7">
             <div class="card shadow-sm border-0 rounded-4 bg-white h-100">
                 <div class="card-header bg-secondary text-white p-3 rounded-top-4">
@@ -63,19 +63,50 @@
                     <div class="d-flex flex-column gap-3">
                         
                         {% for msg in messages_list %}
-                            <div class="p-3 bg-white rounded-3 shadow-sm border-end border-5 border-success">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="p-3 bg-white rounded-3 shadow-sm border-end border-5 {% if msg.reply %}border-info{% else %}border-warning{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap mb-2 gap-1">
                                     <h6 class="fw-bold text-dark mb-0">{{ msg.subject }}</h6>
-                                    <span class="badge bg-light text-muted rounded-pill small">
-                                        <i class="far fa-clock me-1"></i> {{ msg.created_at|date:"Y-m-d H:i" }}
-                                    </span>
+                                    
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if msg.reply %}
+                                            <span class="badge bg-success text-white rounded-pill"><i class="fas fa-check-circle me-1"></i> تم الرد</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark rounded-pill"><i class="fas fa-clock me-1"></i> قيد الانتظار</span>
+                                        {% endif %}
+                                        
+                                        <span class="badge bg-light text-muted rounded-pill small">
+                                            <i class="far fa-clock me-1"></i> {{ msg.created_at|date:"Y-m-d H:i" }}
+                                        </span>
+                                    </div>
                                 </div>
+
                                 <p class="text-secondary small mb-2" style="font-size: 13px;">
                                     <strong>من:</strong> {{ msg.name }} ({{ msg.email }})
                                 </p>
-                                <p class="text-dark bg-light p-2.5 rounded-3 mb-0" style="white-space: pre-line;">
+
+                                <!-- نص رسالة المستخدم -->
+                                <p class="text-dark bg-light p-2.5 rounded-3 mb-2" style="white-space: pre-line; font-size: 14px;">
                                     {{ msg.message }}
                                 </p>
+
+                                <!-- 🌟 عرض رد الإدارة في حالة توفره -->
+                                {% if msg.reply %}
+                                    <div class="p-3 rounded-3 bg-light border-start border-4 border-info mt-2">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong class="text-info" style="font-size: 14px;">
+                                                <i class="fas fa-user-shield me-1"></i> رد الدعم الفني / الإدارة:
+                                            </strong>
+                                            {% if msg.replied_at %}
+                                                <small class="text-muted" style="font-size: 11px;">
+                                                    <i class="far fa-clock me-1"></i> {{ msg.replied_at|date:"Y-m-d H:i" }}
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                        <p class="mb-0 text-dark" style="white-space: pre-line; font-size: 14px;">
+                                            {{ msg.reply }}
+                                        </p>
+                                    </div>
+                                {% endif %}
                             </div>
                         {% empty %}
                             <div class="text-center py-5 my-5 text-muted">
