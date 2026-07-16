@@ -15,25 +15,31 @@ urlpatterns = [
     path('payment-success/<int:booking_id>/', views.payment_success, name='payment_success'),
     path('add/', views.add_car, name='add_car'),
     
-    # 🌟 الرابط الذكي والمحمي للمفضلة لإنهاء مشكلة النيسان باترول فوراً
+    # 3. المفضلة والتعليقات والرسائل
     path('wishlist/toggle/<int:car_id>/', views.toggle_wishlist, name='toggle_wishlist'),
     path('favorites/', views.favorites_view, name='favorites'),
     path('car/<int:car_id>/comment', views.add_comment, name='add_comment_no_slash'),
     path('car/<int:car_id>/comment/', views.add_comment, name='add_comment'),
-    path('comments/', views.AllCommentsView.as_view(), name='all_comments'),
+    
+    # 🌟 تم ضبط الاسم إلى 'comments' وإضافة مسار 'messages'
+    path('comments/', views.AllCommentsView.as_view(), name='comments'),
+    path('messages/', views.messages_view, name='messages'),
+    
     path('my-cars/', views.my_cars, name='my_cars'),
 
+    # 4. الحسابات وتسجيل الدخول
     path('register/', views.register, name='register'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.admin_logout_view, name='logout'),
     path('payment/callback/', views.payment_callback, name='payment_callback'),
 
+    # 5. استعادة كلمة المرور
     path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
-    # 📊 لوحة المتابعة والردود الخاصة بالـ Staff
+    # 6. لوحة المتابعة والردود الخاصة بالـ Staff
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('comment/<int:comment_id>/reply/', views.reply_comment, name='reply_comment'),
     path('message/<int:message_id>/reply/', views.reply_message, name='reply_message'),
