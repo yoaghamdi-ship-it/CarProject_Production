@@ -179,27 +179,34 @@ def add_car(request):
 def book_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
-    # التأكد من عدم حجز السيارة مسبقاً
+    # 1. التأكد من أن السيارة غير مدفوعة ومحجوزة نهائياً من قبل شخص آخر
     if Booking.objects.filter(car=car, status='paid').exists():
-        messages.error(request, "عذراً، هذه السيارة محجوزة حالياً.")
-        return redirect('inventory:index')
+        messages.error(request, "عذراً، هذه السيارة تم حجزها بالكامل وسداد عربونها مسبقاً.")
+        return redirect('inventory:car_detail', car_id=car.id)
 
     deposit_amount = 1000 
+
+    # 2. إنشاء الحجز أو تحديثه مباشرة إلى حالة المدفوع/المحجوز بنجاح (Paid)
+    booking, created = Booking.objects.get_or_create(
+        user=request.user,
+        car=car,
+        defaults={'status': 'paid', 'amount_paid': deposit_amount}
+    )
+
+    # إذا كان هناك حجز معلق سابق لنفس المستخدم، قم بتأكيده وتغيير حالته إلى paid
+    if not created and booking.status != 'paid':
+        booking.status = 'paid'
+        booking.amount_paid = deposit_amount
+        booking.save()
+
+    # 3. حفظ بيانات الجلسة إن كنت تحتاجها
     request.session['pending_car_id'] = car.id
     request.session['deposit_amount'] = deposit_amount
     request.session.modified = True
 
-    # إنشاء حجز بانتظار السداد
-    booking, created = Booking.objects.get_or_create(
-        user=request.user,
-        car=car,
-        status='pending', 
-        defaults={'amount_paid': deposit_amount}
-    )
+    messages.success(request, f"تهانينا! تم تأكيد حجز السيارة {car.brand} {car.model_name} بنجاح.")
     
-    messages.success(request, "تم تقديم طلب الحجز بنجاح! جاري التوجيه لتأكيد العملية.")
-    
-    # ✅ تعديل التوجيه ليعمل مع المسار الصحيح الموجود في urls.py
+    # التوجيه لصفحة تأكيد نجاح الدفع والحجز
     return redirect('inventory:payment_success', booking_id=booking.id)
 
 
