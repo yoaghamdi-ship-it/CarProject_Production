@@ -12,8 +12,8 @@
 
         <div class="comments-feed">
             {% for comment in comments_list %}
-                <div class="card p-3 mb-4 border-0 bg-light rounded-3 shadow-sm">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div class="card p-3 mb-4 border-0 bg-light rounded-3 shadow-sm border-end border-5 {% if comment.reply %}border-info{% else %}border-warning{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
                             <strong class="text-dark">
                                 <i class="fas fa-user-circle text-secondary me-1"></i> {{ comment.user.username }}
@@ -29,9 +29,18 @@
                                 <span class="text-muted fw-bold">سيارة في المخزن ({{ comment.inventory.name }})</span>
                             {% endif %}
                         </div>
-                        <small class="text-muted">
-                            <i class="far fa-clock me-1"></i> {{ comment.created_at|date:"Y-m-d H:i" }}
-                        </small>
+
+                        <div class="d-flex align-items-center gap-2">
+                            {% if comment.reply %}
+                                <span class="badge bg-success text-white rounded-pill"><i class="fas fa-check-circle me-1"></i> تم الرد</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark rounded-pill"><i class="fas fa-clock me-1"></i> قيد الانتظار</span>
+                            {% endif %}
+
+                            <small class="text-muted">
+                                <i class="far fa-clock me-1"></i> {{ comment.created_at|date:"Y-m-d H:i" }}
+                            </small>
+                        </div>
                     </div>
 
                     <p class="mb-0 mt-3 text-secondary px-3" style="font-size: 16px; line-height: 1.6;">
@@ -39,18 +48,18 @@
                     </p>
 
                     {% if comment.reply %}
-                        <div class="bg-white p-3 rounded-3 border-start border-warning border-4 mt-3 ms-3 shadow-sm">
+                        <div class="bg-white p-3 rounded-3 border-start border-info border-4 mt-3 ms-3 shadow-sm">
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <strong class="text-dark">
-                                    <i class="fas fa-user-shield text-warning me-1"></i> رد إدارة المعرض:
+                                <strong class="text-info" style="font-size: 14px;">
+                                    <i class="fas fa-user-shield me-1"></i> رد إدارة المعرض:
                                 </strong>
                                 {% if comment.replied_at %}
-                                    <small class="text-muted" style="font-size: 0.8rem;">
+                                    <small class="text-muted" style="font-size: 11px;">
                                         <i class="far fa-clock me-1"></i> {{ comment.replied_at|date:"Y-m-d H:i" }}
                                     </small>
                                 {% endif %}
                             </div>
-                            <p class="mb-0 text-dark px-2 mt-1" style="font-size: 15px; line-height: 1.5;">
+                            <p class="mb-0 text-dark px-2 mt-1" style="font-size: 15px; line-height: 1.5; white-space: pre-line;">
                                 {{ comment.reply }}
                             </p>
                         </div>
