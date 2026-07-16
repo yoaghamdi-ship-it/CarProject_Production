@@ -175,7 +175,7 @@ def add_car(request):
 
 
 # 7. إجراءات الحجز المبدئي وتحضير الجلسة
-@login_required(login_url='inventory:login') # 👈 توجيه المشتري لصفحة الدخول إن لم يكن مسجلاً
+@login_required(login_url='inventory:login')
 def book_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
@@ -197,8 +197,10 @@ def book_car(request, car_id):
         defaults={'amount_paid': deposit_amount}
     )
     
-    messages.info(request, f"تم تحضير طلب الحجز. يرجى إتمام سداد العربون.")
-    return redirect('inventory:car_detail', car_id=car.id)
+    messages.info(request, "تم تحضير طلب الحجز. جاري تحويلك لإتمام سداد العربون...")
+    
+    # 🌟 التوجيه لصفحة السداد بدلاً من العودة لصفحة السيارة
+    return redirect('inventory:payment_page', booking_id=booking.id)  # أصلح اسم المسار حسب المعتمد لديك
 
 
 # 8. معالجة نجاح الدفع وعرض الفاتورة
