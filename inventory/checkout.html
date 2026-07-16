@@ -10,40 +10,44 @@
     <div class="row justify-content-center">
         <div class="col-md-7">
             <div class="card shadow-lg border-0 rounded-4 p-4 bg-white">
-                <h3 class="fw-bold text-center mb-3">
-                    <i class="fas fa-credit-card text-success me-2"></i> سداد عربون الحجز
+                
+                <h3 class="fw-bold text-center mb-3 text-dark">
+                    <i class="fas fa-credit-card text-success me-2"></i> إتمام سداد العربون
                 </h3>
                 <p class="text-muted text-center mb-4">
-                    أدخل معلومات البطاقة لإتمام حجز السيارة ({{ car.brand }} {{ car.model_name }})
+                    يرجى إدخال بيانات البطاقة أدناه لتأكيد حجز السيارة
                 </p>
 
-                <div class="alert alert-light border rounded-3 mb-4 p-3 d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong class="d-block text-dark">{{ car.brand }} {{ car.model_name }} ({{ car.year }})</strong>
-                        <small class="text-muted">المشتري: {{ request.user.username }}</small>
-                    </div>
-                    <div class="text-end">
-                        <span class="text-muted small d-block">المبلغ المطلوب:</span>
+                <div class="alert alert-light border rounded-3 mb-4 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong class="text-dark fs-5">{{ car.brand }} {{ car.model_name }} ({{ car.year }})</strong>
                         <span class="fs-5 fw-bold text-success">{{ booking.amount_paid }} ريال</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>اسم العميل: <strong>{{ request.user.username }}</strong></span>
+                        <span>رقم الحجز: <strong>#{{ booking.id }}</strong></span>
                     </div>
                 </div>
 
-                <!-- نموذج إدخال بطاقة المشتري من ميسر -->
                 <div id="moyasar-form" class="mt-3"></div>
+
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    Moyasar.init({
-        element: '#moyasar-form',
-        amount: {{ amount_in_halalas }},
-        currency: 'SAR',
-        description: 'سداد عربون حجز سيارة #{{ booking.id }}',
-        publishable_api_key: '{{ moyasar_publishable_key }}',
-        callback_url: '{{ request.scheme }}://{{ request.get_host }}{% url "inventory:payment_callback" %}',
-        methods: ['creditcard', 'applepay', 'stcpay']
+    document.addEventListener("DOMContentLoaded", function () {
+        Moyasar.init({
+            element: '#moyasar-form',
+            amount: {{ amount_in_halalas }},
+            currency: 'SAR',
+            description: 'سداد عربون حجز سيارة #{{ booking.id }} - {{ request.user.username }}',
+            publishable_api_key: '{{ moyasar_publishable_key }}',
+            callback_url: '{{ request.scheme }}://{{ request.get_host }}{% url "inventory:payment_callback" %}',
+            methods: ['creditcard', 'applepay', 'stcpay']
+        });
     });
 </script>
 {% endblock %}

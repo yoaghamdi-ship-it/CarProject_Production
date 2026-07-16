@@ -186,7 +186,7 @@ def book_car(request, car_id):
 
     deposit_amount = 1000  # قيمة العربون بالريال
 
-    # إنشاء حجز بانتظار السداد (Pending)
+    # إنشاء حجز جديد بانتظار السداد (Pending)
     booking, created = Booking.objects.get_or_create(
         user=request.user,
         car=car,
@@ -200,8 +200,7 @@ def book_car(request, car_id):
     # التوجيه لصفحة أدوات الدفع الخاصة بميسر
     return redirect('inventory:checkout', booking_id=booking.id)
 
-
-# 🌟 7.5. صفحة أدوات الدفع المباشرة لـ Moyasar
+# 🌟 صفحة أدوات الدفع المباشرة لـ Moyasar (تسمح للمشتري بإدخال بيانات البطاقة)
 @login_required(login_url='inventory:login')
 def checkout(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
@@ -216,7 +215,6 @@ def checkout(request, booking_id):
         'moyasar_publishable_key': MOYASAR_PUBLISHABLE_KEY,
     }
     return render(request, 'inventory/checkout.html', context)
-
 
 # 8. معالجة نجاح الدفع وعرض الفاتورة
 def payment_success(request, booking_id):
