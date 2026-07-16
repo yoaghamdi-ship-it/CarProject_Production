@@ -135,7 +135,7 @@ def add_comment(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
     if request.method == 'POST':
-        comment_content = request.POST.get('content')
+        comment_content = request.POST.get('content') or request.POST.get('text')
         
         if comment_content:
             inventory_item = Inventory.objects.filter(inventory_cars=car).first()
@@ -179,35 +179,43 @@ def add_car(request):
 def book_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
-    # 1. التأكد من أن السيارة غير مدفوعة ومحجوزة نهائياً من قبل شخص آخر
+    # التأكد من أن السيارة غير محجوزة نهائياً من قبل شخص آخر
     if Booking.objects.filter(car=car, status='paid').exists():
         messages.error(request, "عذراً، هذه السيارة تم حجزها بالكامل وسداد عربونها مسبقاً.")
         return redirect('inventory:car_detail', car_id=car.id)
 
-    deposit_amount = 1000 
+    deposit_amount = 1000  # قيمة العربون بالريال
 
-    # 2. إنشاء الحجز أو تحديثه مباشرة إلى حالة المدفوع/المحجوز بنجاح (Paid)
+    # إنشاء حجز بانتظار السداد (Pending)
     booking, created = Booking.objects.get_or_create(
         user=request.user,
         car=car,
-        defaults={'status': 'paid', 'amount_paid': deposit_amount}
+        status='pending',
+        defaults={'amount_paid': deposit_amount}
     )
 
-    # إذا كان هناك حجز معلق سابق لنفس المستخدم، قم بتأكيده وتغيير حالته إلى paid
-    if not created and booking.status != 'paid':
-        booking.status = 'paid'
-        booking.amount_paid = deposit_amount
-        booking.save()
-
-    # 3. حفظ بيانات الجلسة إن كنت تحتاجها
     request.session['pending_car_id'] = car.id
-    request.session['deposit_amount'] = deposit_amount
     request.session.modified = True
 
-    messages.success(request, f"تهانينا! تم تأكيد حجز السيارة {car.brand} {car.model_name} بنجاح.")
+    # التوجيه لصفحة أدوات الدفع الخاصة بميسر
+    return redirect('inventory:checkout', booking_id=booking.id)
+
+
+# 🌟 7.5. صفحة أدوات الدفع المباشرة لـ Moyasar
+@login_required(login_url='inventory:login')
+def checkout(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     
-    # التوجيه لصفحة تأكيد نجاح الدفع والحجز
-    return redirect('inventory:payment_success', booking_id=booking.id)
+    # تحويل مبلغ العربون إلى هللات لنموذج ميسر (1000 ريال = 100000 هللة)
+    amount_in_halalas = int((booking.amount_paid or 1000) * 100)
+
+    context = {
+        'booking': booking,
+        'car': booking.car,
+        'amount_in_halalas': amount_in_halalas,
+        'moyasar_publishable_key': MOYASAR_PUBLISHABLE_KEY,
+    }
+    return render(request, 'inventory/checkout.html', context)
 
 
 # 8. معالجة نجاح الدفع وعرض الفاتورة
@@ -304,11 +312,9 @@ def toggle_favorite(request, car_id):
 
 @login_required(login_url='inventory:login')
 def favorites_view(request):
-    # 1. محاولة جلب المفضلة من الجلسة (Session) أولاً
     wishlist_session = request.session.get('wishlist_cars', [])
     favorite_cars = Car.objects.filter(id__in=wishlist_session)
     
-    # 2. إذا لم تكن موجودة في الجلسة، نأتي بها من قاعدة البيانات بحسب الحقل الصحيح (inventory_id)
     if not favorite_cars.exists():
         fav_car_ids = Favorite.objects.filter(user=request.user).values_list('inventory_id', flat=True)
         favorite_cars = Car.objects.filter(id__in=fav_car_ids)
@@ -369,10 +375,10 @@ def my_cars(request):
     return render(request, 'inventory/my_cars.html', {'cars': cars})
 
 
-# 🔒 14. دالة تسجيل الخروج الآمنة وتدمير الجلسة تماماً (تغطي ثغرة البقاء مسجلاً)
+# 🔒 14. دالة تسجيل الخروج الآمنة وتدمير الجلسة تماماً
 def admin_logout_view(request):
     logout(request)
-    request.session.flush()  # 👈 تدمير كافة الكوكيز والجلسة تماماً لمنع بقاء حساب الأدمن متصلاً
+    request.session.flush()
     response = redirect('inventory:index')
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
@@ -380,14 +386,13 @@ def admin_logout_view(request):
     return response
 
 
-# 🔒 15. كلاس تسجيل الدخول المعدل لمنع التوجيه الخاطئ لـ /admin/
+# 🔒 15. كلاس تسجيل الدخول المعدل
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
     next_page = reverse_lazy('inventory:index')
 
 @staff_member_required
 def admin_dashboard(request):
-    """لوحة متابعة الرسائل والتعليقات غير المجاب عليها"""
     pending_comments = Comment.objects.filter(reply__isnull=True).order_by('-created_at')
     pending_messages = Message.objects.filter(reply__isnull=True).order_by('-created_at')
     
@@ -399,7 +404,6 @@ def admin_dashboard(request):
 
 @staff_member_required
 def reply_comment(request, comment_id):
-    """حفظ رد الموظف على تعليق محدد"""
     if request.method == "POST":
         comment = get_object_or_404(Comment, id=comment_id)
         reply_text = request.POST.get('reply_text', '').strip()
@@ -414,7 +418,6 @@ def reply_comment(request, comment_id):
 
 @staff_member_required
 def reply_message(request, message_id):
-    """حفظ رد الموظف على رسالة محددة"""
     if request.method == "POST":
         msg = get_object_or_404(Message, id=message_id)
         reply_text = request.POST.get('reply_text', '').strip()

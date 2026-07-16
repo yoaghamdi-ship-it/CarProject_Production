@@ -32,6 +32,7 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.admin_logout_view, name='logout'),
     path('payment/callback/', views.payment_callback, name='payment_callback'),
+    path('checkout/<int:booking_id>/', views.checkout, name='checkout'),
 
     # 5. استعادة كلمة المرور
     path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
