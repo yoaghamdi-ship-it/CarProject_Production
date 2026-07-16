@@ -197,10 +197,10 @@ def book_car(request, car_id):
         defaults={'amount_paid': deposit_amount}
     )
     
-    messages.info(request, "تم تحضير طلب الحجز. جاري تحويلك لإتمام سداد العربون...")
+    messages.success(request, "تم تقديم طلب الحجز بنجاح! جاري التوجيه لتأكيد العملية.")
     
-    # 🌟 التوجيه لصفحة السداد بدلاً من العودة لصفحة السيارة
-    return redirect('inventory:payment_page', booking_id=booking.id)  # أصلح اسم المسار حسب المعتمد لديك
+    # ✅ تعديل التوجيه ليعمل مع المسار الصحيح الموجود في urls.py
+    return redirect('inventory:payment_success', booking_id=booking.id)
 
 
 # 8. معالجة نجاح الدفع وعرض الفاتورة
