@@ -6,7 +6,6 @@
 <div class="container mt-5 text-end" dir="rtl">
     <div class="row g-4 justify-content-center">
         
-        <!-- أولاً: نموذج إرسال رسالة جديدة -->
         <div class="col-md-5">
             <div class="card shadow-sm border-0 rounded-4 bg-white">
                 <div class="card-header bg-dark text-white p-3 rounded-top-4">
@@ -18,31 +17,26 @@
                     <form action="{% url 'inventory:messages' %}" method="post">
                         {% csrf_token %}
                         
-                        <!-- حقل الاسم -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark">الاسم الكامل</label>
                             <input type="text" name="name" class="form-control rounded-3 p-2.5" value="{{ request.user.get_full_name|default:request.user.username }}" required>
                         </div>
 
-                        <!-- حقل الايميل (المطلوب) -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark">البريد الإلكتروني</label>
                             <input type="email" name="email" class="form-control rounded-3 p-2.5" value="{{ request.user.email }}" placeholder="name@example.com" required>
                         </div>
 
-                        <!-- حقل عنوان الرسالة -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark">عنوان الاستفسار</label>
                             <input type="text" name="subject" class="form-control rounded-3 p-2.5" placeholder="مثال: استفسار عن حجز سيارة" required>
                         </div>
 
-                        <!-- حقل نص الرسالة -->
                         <div class="mb-4">
                             <label class="form-label fw-semibold text-dark">نص الرسالة</label>
                             <textarea name="message" class="form-control rounded-3 p-2.5" rows="4" placeholder="اكتب تفاصيل استفسارك أو مشكلتك هنا..." required></textarea>
                         </div>
 
-                        <!-- زر الإرسال -->
                         <button type="submit" class="btn btn-success w-100 rounded-pill py-2.5 fw-bold shadow-sm">
                             <i class="fas fa-paper-plane me-1"></i> إرسال الرسالة الآن
                         </button>
@@ -51,7 +45,6 @@
             </div>
         </div>
 
-        <!-- ثانياً: صندوق عرض الرسائل المرسلة مسبقاً والردود عليها -->
         <div class="col-md-7">
             <div class="card shadow-sm border-0 rounded-4 bg-white h-100">
                 <div class="card-header bg-secondary text-white p-3 rounded-top-4">
@@ -84,12 +77,10 @@
                                     <strong>من:</strong> {{ msg.name }} ({{ msg.email }})
                                 </p>
 
-                                <!-- نص رسالة المستخدم -->
                                 <p class="text-dark bg-light p-2.5 rounded-3 mb-2" style="white-space: pre-line; font-size: 14px;">
                                     {{ msg.message }}
                                 </p>
 
-                                <!-- 🌟 عرض رد الإدارة في حالة توفره -->
                                 {% if msg.reply %}
                                     <div class="p-3 rounded-3 bg-light border-start border-4 border-info mt-2">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -112,15 +103,3 @@
                             <div class="text-center py-5 my-5 text-muted">
                                 <i class="far fa-folder-open fa-4x opacity-25 mb-3"></i>
                                 <h6 class="fw-bold text-dark">لا توجد رسائل سابقة</h6>
-                                <p class="small">أي رسالة تقوم بإرسالها من النموذج المجاور ستظهر هنا في الأرشيف فوراً.</p>
-                            </div>
-                        {% endfor %}
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-{% endblock %}
