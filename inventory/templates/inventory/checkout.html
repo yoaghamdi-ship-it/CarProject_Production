@@ -3,6 +3,7 @@
 {% block title %}إتمام سداد العربون{% endblock %}
 
 {% block content %}
+<!-- مكتبات بوابة ميسر الرسمية -->
 <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" />
 <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
 
@@ -15,9 +16,10 @@
                     <i class="fas fa-credit-card text-success me-2"></i> إتمام سداد العربون
                 </h3>
                 <p class="text-muted text-center mb-4">
-                    يرجى إدخال بيانات البطاقة أدناه لتأكيد حجز السيارة
+                    يرجى إدخال بيانات البطاقة البنكية أدناه لتأكيد الحجز
                 </p>
 
+                <!-- تفاصيل الحجز والمشتري -->
                 <div class="alert alert-light border rounded-3 mb-4 p-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <strong class="text-dark fs-5">{{ car.brand }} {{ car.model_name }} ({{ car.year }})</strong>
@@ -25,11 +27,12 @@
                     </div>
                     <hr class="my-2">
                     <div class="d-flex justify-content-between text-muted small">
-                        <span>اسم العميل: <strong>{{ request.user.username }}</strong></span>
+                        <span>اسم المشتري: <strong>{{ request.user.username }}</strong></span>
                         <span>رقم الحجز: <strong>#{{ booking.id }}</strong></span>
                     </div>
                 </div>
 
+                <!-- 🌟 نموذج إدخال بطاقة العميل (مدى / Visa / MasterCard / Apple Pay) -->
                 <div id="moyasar-form" class="mt-3"></div>
 
             </div>

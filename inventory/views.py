@@ -179,14 +179,14 @@ def add_car(request):
 def book_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
     
-    # التأكد من أن السيارة غير محجوزة نهائياً من قبل شخص آخر
+    # التأكد من أن السيارة غير محجوزة ومدفوعة مسبقاً
     if Booking.objects.filter(car=car, status='paid').exists():
         messages.error(request, "عذراً، هذه السيارة تم حجزها بالكامل وسداد عربونها مسبقاً.")
         return redirect('inventory:car_detail', car_id=car.id)
 
     deposit_amount = 1000  # قيمة العربون بالريال
 
-    # إنشاء حجز جديد بانتظار السداد (Pending)
+    # إنشاء حجز مبدئي بحالة (pending) بانتظار إدخال بيانات البطاقة والسداد
     booking, created = Booking.objects.get_or_create(
         user=request.user,
         car=car,
@@ -197,15 +197,16 @@ def book_car(request, car_id):
     request.session['pending_car_id'] = car.id
     request.session.modified = True
 
-    # التوجيه لصفحة أدوات الدفع الخاصة بميسر
+    # 👈 التوجيه لصفحة أدوات الدفع (checkout) لإدخال بيانات بطاقة المشتري
     return redirect('inventory:checkout', booking_id=booking.id)
+
 
 # 🌟 صفحة أدوات الدفع المباشرة لـ Moyasar (تسمح للمشتري بإدخال بيانات البطاقة)
 @login_required(login_url='inventory:login')
 def checkout(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     
-    # تحويل مبلغ العربون إلى هللات لنموذج ميسر (1000 ريال = 100000 هللة)
+    # تحويل المبلغ إلى هللات لأن بوابة ميسر تتعامل بالهللة (1000 ريال = 100000 هللة)
     amount_in_halalas = int((booking.amount_paid or 1000) * 100)
 
     context = {
@@ -215,6 +216,7 @@ def checkout(request, booking_id):
         'moyasar_publishable_key': MOYASAR_PUBLISHABLE_KEY,
     }
     return render(request, 'inventory/checkout.html', context)
+
 
 # 8. معالجة نجاح الدفع وعرض الفاتورة
 def payment_success(request, booking_id):
