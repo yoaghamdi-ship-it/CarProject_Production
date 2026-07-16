@@ -54,12 +54,16 @@ def check_expired_bookings():
 
 # 1. الصفحة الرئيسية
 def index(request):
+    # جلب السيارات المتاحة فقط أو الفحص المباشر بناءً على حالة السيارة في قاعدة البيانات
     cars = Car.objects.all()
     
     for car in cars:
-        car.is_already_booked = Booking.objects.filter(car=car, status='paid').exists()
+        # السيارة تكون محجوزة فقط إذا كانت حالتها في جدول السيارات booked
+        # أو إذا كان يوجد حجز مدفوع فعال
+        car.is_already_booked = (car.status == 'booked') or Booking.objects.filter(car=car, status='paid').exists()
     
-    ticker_cars = [car for car in cars if not car.is_already_booked]
+    # عرض السيارات المتاحة فقط في الشريط المتحرك (Ticker)
+    ticker_cars = [car for car in cars if not car.is_already_booked and car.is_available]
 
     if request.user.is_authenticated:
         if 'wishlist_cars' not in request.session or not request.session['wishlist_cars']:
@@ -206,7 +210,7 @@ def book_car(request, car_id):
 def checkout(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     
-    # تحويل المبلغ إلى هللات لأن بوابة ميسر تتعامل بالهللة (1000 ريال = 100000 هللة)
+    # تحويل مبلغ العربون إلى هللات (1000 ريال = 100000 هللة)
     amount_in_halalas = int((booking.amount_paid or 1000) * 100)
 
     context = {

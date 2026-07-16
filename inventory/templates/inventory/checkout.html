@@ -3,7 +3,6 @@
 {% block title %}إتمام سداد العربون{% endblock %}
 
 {% block content %}
-<!-- مكتبات بوابة ميسر الرسمية -->
 <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" />
 <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
 
@@ -13,13 +12,12 @@
             <div class="card shadow-lg border-0 rounded-4 p-4 bg-white">
                 
                 <h3 class="fw-bold text-center mb-3 text-dark">
-                    <i class="fas fa-credit-card text-success me-2"></i> إتمام سداد العربون
+                    <i class="fas fa-credit-card text-success me-2"></i> سداد عربون الحجز
                 </h3>
                 <p class="text-muted text-center mb-4">
-                    يرجى إدخال بيانات البطاقة البنكية أدناه لتأكيد الحجز
+                    أدخل معلومات البطاقة البنكية لإتمام حجز السيارة
                 </p>
 
-                <!-- تفاصيل الحجز والمشتري -->
                 <div class="alert alert-light border rounded-3 mb-4 p-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <strong class="text-dark fs-5">{{ car.brand }} {{ car.model_name }} ({{ car.year }})</strong>
@@ -27,12 +25,11 @@
                     </div>
                     <hr class="my-2">
                     <div class="d-flex justify-content-between text-muted small">
-                        <span>اسم المشتري: <strong>{{ request.user.username }}</strong></span>
+                        <span>المشتري: <strong>{{ request.user.username }}</strong></span>
                         <span>رقم الحجز: <strong>#{{ booking.id }}</strong></span>
                     </div>
                 </div>
 
-                <!-- 🌟 نموذج إدخال بطاقة العميل (مدى / Visa / MasterCard / Apple Pay) -->
                 <div id="moyasar-form" class="mt-3"></div>
 
             </div>
@@ -41,16 +38,20 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        Moyasar.init({
-            element: '#moyasar-form',
-            amount: {{ amount_in_halalas }},
-            currency: 'SAR',
-            description: 'سداد عربون حجز سيارة #{{ booking.id }} - {{ request.user.username }}',
-            publishable_api_key: '{{ moyasar_publishable_key }}',
-            callback_url: '{{ request.scheme }}://{{ request.get_host }}{% url "inventory:payment_callback" %}',
-            methods: ['creditcard', 'applepay', 'stcpay']
-        });
-    });
+    window.onload = function() {
+        if (typeof Moyasar !== 'undefined') {
+            Moyasar.init({
+                element: '#moyasar-form',
+                amount: {{ amount_in_halalas }},
+                currency: 'SAR',
+                description: 'حجز سيارة #{{ booking.id }} - {{ request.user.username }}',
+                publishable_api_key: '{{ moyasar_publishable_key }}',
+                callback_url: '{{ request.scheme }}://{{ request.get_host }}{% url "inventory:payment_callback" %}',
+                methods: ['creditcard', 'applepay', 'stcpay']
+            });
+        } else {
+            console.error("مكتبة ميسر لم يتم تحميلها بشكل صحيح.");
+        }
+    };
 </script>
 {% endblock %}
