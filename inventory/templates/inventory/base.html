@@ -103,7 +103,7 @@
                             أرخص سيارة <strong>{{ car.brand }}</strong> متوفرة هي ({{ car.model_name }}) بسعر: 
                             <span class="badge-price mx-2">{{ car.price }} ريال</span>
                             {% if car.id %}
-                                <a href="{% url 'inventory:car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
+                                <a href="{% url 'inventory:car_detail' car.id %}" target="_self" class="text-info small fw-bold text-decoration-none ms-1">
                                     اغتنمها <i class="fas fa-angle-left"></i>
                                 </a>
                             {% endif %}
@@ -117,7 +117,7 @@
                             أرخص سيارة <strong>{{ car.brand }}</strong> متوفرة هي ({{ car.model_name }}) بسعر: 
                             <span class="badge-price mx-2">{{ car.price }} ريال</span>
                             {% if car.id %}
-                                <a href="{% url 'inventory:car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
+                                <a href="{% url 'inventory:car_detail' car.id %}" target="_self" class="text-info small fw-bold text-decoration-none ms-1">
                                     اغتنمها <i class="fas fa-angle-left"></i>
                                 </a>
                             {% endif %}
@@ -147,7 +147,7 @@
                         <a class="nav-link text-white" href="{% url 'inventory:index' %}">
                             <i class="fas fa-home me-1 text-secondary"></i> الرئيسية
                         </a>
-                    </li>
+                    </li >
                     
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{% url 'inventory:favorites' %}">
@@ -188,7 +188,8 @@
                             <ul class="dropdown-menu dropdown-menu-end text-end shadow">
                                 {% if user.is_staff %}
                                     <li><a class="dropdown-item small" href="{% url 'inventory:admin_dashboard' %}"><i class="fas fa-tasks me-1 text-info"></i> لوحة الردود والمتابعة</a></li>
-                                    <li><a class="dropdown-item small text-secondary" href="{% url 'admin:index' %}" target="_blank"><i class="fas fa-cog me-1"></i> لوحة الإدارة</a></li>
+                                    <!-- 🛠️ تم تعديل السطر أدناه وحذف target="_blank" لحل المشكلة نهائياً -->
+                                    <li><a class="dropdown-item small text-secondary" href="{% url 'admin:index' %}" target="_self"><i class="fas fa-cog me-1"></i> لوحة الإدارة</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
                                 <li>
@@ -216,12 +217,14 @@
 
     <div class="container mt-3">
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show text-end shadow-sm" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
+            {% block messages_section %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show text-end shadow-sm" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endblock %}
         {% endif %}
     </div>
 
