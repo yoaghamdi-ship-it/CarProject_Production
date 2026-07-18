@@ -208,11 +208,9 @@ def book_car(request, car_id):
 # 🌟 صفحة أدوات الدفع المباشرة لـ Moyasar (تسمح للمشتري بإدخال بيانات البطاقة)
 @login_required(login_url='inventory:login')
 def checkout(request, booking_id):
-    # جلب الحجز الخاص بالمستخدم الحالي فقط لضمان الأمان
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     
-    # تحويل المبلغ إلى هللات (تأكد أن حقل amount_paid يحتوي على قيمة صحيحة في الداتا بيز)
-    # استخدام float أولاً ثم تحويله إلى int يمنع أخطاء التقرير البنكي
+    # حساب الهللات بدقة
     amount_paid = float(booking.amount_paid) if booking.amount_paid else 1000.0
     amount_in_halalas = int(amount_paid * 100)
 
@@ -220,8 +218,8 @@ def checkout(request, booking_id):
         'booking': booking,
         'car': booking.car,
         'amount_in_halalas': amount_in_halalas,
-        # جلب المفتاح من ملف settings ليكون آمن ومضمون
-        'moyasar_publishable_key': getattr(settings, 'MOYASAR_PUBLISHABLE_KEY', '').strip(),
+        # ضع مفتاحك هنا مباشرة بين علامتي التنصيص للتجربة وضمان وصوله
+        'moyasar_publishable_key': "pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3", 
     }
     return render(request, 'inventory/checkout.html', context)
 

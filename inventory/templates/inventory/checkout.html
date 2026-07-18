@@ -3,8 +3,9 @@
 {% block title %}إتمام سداد العربون{% endblock %}
 
 {% block content %}
-<!-- CDN ميسر الرسمي الرسمية -->
+<!-- 1. استدعاء مكتبات ميسر الرسمية بالتوافق مع المتصفحات الحديثة -->
 <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" />
+<script src="https://polyfill.io/v3/polyfill.min.js?features=fetch"></script>
 <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
 
 <div class="container my-5 text-end" dir="rtl">
@@ -15,61 +16,65 @@
                 <h3 class="fw-bold text-center mb-3 text-dark">
                     <i class="fas fa-credit-card text-success me-2"></i> سداد عربون الحجز
                 </h3>
-                <p class="text-muted text-center mb-4">
-                    أدخل معلومات البطاقة البنكية لإتمام حجز السيارة
-                </p>
+                <p class="text-muted text-center mb-4">أدخل معلومات البطاقة البنكية لإتمام حجز السيارة</p>
 
                 <!-- تفاصيل الحجز -->
                 <div class="alert alert-light border rounded-3 mb-4 p-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <strong class="text-dark fs-5">{{ car.brand }} {{ car.model_name }} ({{ car.year }})</strong>
+                        <strong class="text-dark fs-5">{{ car.brand }} {{ car.model_name }}</strong>
                         <span class="fs-5 fw-bold text-success">{{ booking.amount_paid }} ريال</span>
-                    </div>
-                    <hr class="my-2">
-                    <div class="d-flex justify-content-between text-muted small">
-                        <span>المشتري: <strong>{{ request.user.username }}</strong></span>
-                        <span>رقم الحجز: <strong>#{{ booking.id }}</strong></span>
                     </div>
                 </div>
 
-                <!-- حاوية إظهار الأخطاء إن وجدت -->
-                <div id="moyasar-error" class="alert alert-danger d-none my-2"></div>
+                <!-- حاوية إظهار الأخطاء الفورية للـ JavaScript إن وجدت -->
+                <div id="moyasar-debug-error" class="alert alert-danger d-none my-2"></div>
 
-                <!-- 🌟 حاوية ظهور نموذج ميسر الأساسية -->
-                <div id="moyasar-form"></div>
+                <!-- 2. الحاوية الرسمية لنموذج ميسر (يجب استخدام class بالتوافق مع مكتبة Moyasar) -->
+                <div class="mysr-form"></div>
 
             </div>
         </div>
     </div>
 </div>
 
+<!-- 3. سكربت تشغيل بوابة ميسر البيئي والآمن -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const errorDiv = document.getElementById('moyasar-error');
+        const errorDiv = document.getElementById('moyasar-debug-error');
         
-        if (typeof Moyasar === 'undefined') {
-            errorDiv.classList.remove('d-none');
-            errorDiv.innerHTML = "❌ تعذر تحميل مكتبة ميسر. تحقق من الاتصال بالإنترنت أو محجبات الإعلانات (AdBlockers).";
-            return;
-        }
+        // بناء رابط الاستجابة (Callback URL) ديناميكياً لتجنب مشاكل الهوست وبروتوكولات الـ Mixed Content
+        var currentHost = window.location.origin; 
+        var callbackUrl = currentHost + "{% url 'inventory:payment_callback' %}";
+        
+        // طباعة معلومات الفحص الفوري في متصفحك (Console)
+        console.log("=== Moyasar Debugging ===");
+        console.log("Amount in halalas:", {{ amount_in_halalas|default:100000 }});
+        console.log("Publishable Key Exists:", "{{ moyasar_publishable_key }}" ? "Yes" : "No");
+        console.log("Callback URL configured:", callbackUrl);
 
         try {
+            // التحقق من أن المتصفح لم يمنع تحميل ملفات ميسر الخارجية
+            if (typeof Moyasar === 'undefined') {
+                throw new Error("لم يتم تحميل مكتبة ميسر من خوادمها بنجاح. قد يكون بسبب إضافات حجب الإعلانات (AdBlocker) أو جدار الحماية في متصفحك.");
+            }
+
+            // تشغيل نموذج ميسر التفاعلي لبيانات البطاقة
             Moyasar.init({
-                element: '#moyasar-form',
-                amount: {{ amount_in_halalas }},
+                element: '.mysr-form',
+                amount: {{ amount_in_halalas|default:100000 }},
                 currency: 'SAR',
-                description: 'حجز سيارة #{{ booking.id }} - {{ request.user.username }}',
+                description: 'حجز سيارة رقم {{ booking.id }} - {{ request.user.username }}',
                 publishable_api_key: '{{ moyasar_publishable_key }}',
-                callback_url: '{{ request.scheme }}://{{ request.get_host }}{% url "inventory:payment_callback" %}',
-                methods: ['creditcard', 'stcpay'],
-                on_failure: function (error) {
-                    console.error('فشل ميسر:', error);
-                }
+                callback_url: callbackUrl,
+                methods: ['creditcard', 'stcpay'] // نكتفي بـ creditcard و stcpay للتأكد من استقرار عمل الواجهة أولاً
             });
-        } catch (err) {
-            console.error("خطأ أثناء تشغيل ميسر:", err);
+            console.log("✅ تم تشغيل وربط ميسر بالواجهة بنجاح!");
+            
+        } catch (error) {
+            console.error("❌ فشل في تشغيل ميسر:", error.message);
+            // إظهار الخطأ للمطور مباشرة على الشاشة لحل المشكلة فوراً
             errorDiv.classList.remove('d-none');
-            errorDiv.innerHTML = "❌ حدث خطأ أثناء تحميل نموذج السداد: " + err.message;
+            errorDiv.innerHTML = "<strong>تنبيه النظام:</strong> " + error.message;
         }
     });
 </script>
