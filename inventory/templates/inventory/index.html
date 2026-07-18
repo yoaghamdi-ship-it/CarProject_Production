@@ -84,7 +84,7 @@
         100% { transform: scale(1); opacity: 1; }
     }
 
-    /* 3. أزرار الفلاتر اللحظية الأنيقة */
+    /* 3. أشرطة الفلاتر اللحظية الأنيقة */
     .filter-btn {
         border-radius: 30px !important;
         padding: 8px 22px;
@@ -316,7 +316,7 @@
                 
                 <div class="card h-100 shadow-sm custom-car-card position-relative">
                     
-                    <!-- 🌟 التعديل السحري الحاسم والنهائي لإنهاء مشكلة الباتروال تماماً 🌟 -->
+                    <!-- 🌟 المفضلة المحمية 🌟 -->
                     <a href="{% url 'inventory:toggle_wishlist' car.id %}" 
                        class="wishlist-heart {% if car.id in request.session.wishlist_cars %}active{% endif %}"
                        title="إضافة {{ car.brand }} إلى المفضلة">
@@ -369,7 +369,7 @@
                                 </div>
                             </div>
 
-                            <!-- الأزرار ثلاثية الأبعاد التفاعلية والذكية -->
+                            <!-- الأزرار ثلاثية الأبعاد التفاعلية والذكية بعد حذف target="_blank" -->
                             <div class="d-grid gap-2">
                                 <a href="{% url 'inventory:car_detail' car.id %}" class="btn btn-action btn-details w-100">
                                     <i class="bi bi-eye-fill"></i> معاينة وتفاصيل السيارة
@@ -380,6 +380,7 @@
                                         🔒 تم تأمين الحجز بالعربون
                                     </button>
                                 {% else %}
+                                    <!-- تم تعديل الرابط هنا ليكون في نفس الصفحة مباشرة وتجنب فتح نافذة ثانية -->
                                     <a href="{% url 'inventory:car_detail' car.id %}" class="btn btn-action btn-reserve w-100">
                                         ⚡ احجز السيارة الآن فوراً
                                     </a>
