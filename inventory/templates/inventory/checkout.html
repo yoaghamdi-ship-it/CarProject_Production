@@ -70,6 +70,22 @@
             });
             console.log("✅ تم تشغيل وربط ميسر بالواجهة بنجاح!");
             
+            // 🛠️ كود تتبع النموذج وتعديل سلوك الـ target لفتح التبويب في نفس الصفحة قسراً
+            const targetNode = document.querySelector('.mysr-form');
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    const forms = targetNode.querySelectorAll('form');
+                    forms.forEach(function(form) {
+                        if (form.getAttribute('target') === '_blank') {
+                            form.setAttribute('target', '_self');
+                            console.log("🛠️ تم كسر حماية ميسر وإجبار النموذج على الفتح في نفس الصفحة!");
+                        }
+                    });
+                });
+            });
+            
+            observer.observe(targetNode, { childList: true, subtree: true });
+            
         } catch (error) {
             console.error("❌ فشل في تشغيل ميسر:", error.message);
             // إظهار الخطأ للمطور مباشرة على الشاشة لحل المشكلة فوراً
