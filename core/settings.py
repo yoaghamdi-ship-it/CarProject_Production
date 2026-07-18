@@ -169,3 +169,6 @@ SESSION_SAVE_EVERY_REQUEST = True
 LOGIN_REDIRECT_URL = 'inventory:index'
 LOGOUT_REDIRECT_URL = 'inventory:index'
 LOGIN_URL = 'inventory:login'
+
+# أضف المفتاح الصحيح هنا بالكامل
+MOYASAR_PUBLISHABLE_KEY = "pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3"

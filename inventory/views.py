@@ -208,16 +208,20 @@ def book_car(request, car_id):
 # 🌟 صفحة أدوات الدفع المباشرة لـ Moyasar (تسمح للمشتري بإدخال بيانات البطاقة)
 @login_required(login_url='inventory:login')
 def checkout(request, booking_id):
+    # جلب الحجز الخاص بالمستخدم الحالي فقط لضمان الأمان
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     
-    # تحويل مبلغ العربون إلى هللات (1000 ريال = 100000 هللة)
-    amount_in_halalas = int((booking.amount_paid or 1000) * 100)
+    # تحويل المبلغ إلى هللات (تأكد أن حقل amount_paid يحتوي على قيمة صحيحة في الداتا بيز)
+    # استخدام float أولاً ثم تحويله إلى int يمنع أخطاء التقرير البنكي
+    amount_paid = float(booking.amount_paid) if booking.amount_paid else 1000.0
+    amount_in_halalas = int(amount_paid * 100)
 
     context = {
         'booking': booking,
         'car': booking.car,
         'amount_in_halalas': amount_in_halalas,
-        'moyasar_publishable_key': MOYASAR_PUBLISHABLE_KEY,
+        # جلب المفتاح من ملف settings ليكون آمن ومضمون
+        'moyasar_publishable_key': getattr(settings, 'MOYASAR_PUBLISHABLE_KEY', '').strip(),
     }
     return render(request, 'inventory/checkout.html', context)
 
