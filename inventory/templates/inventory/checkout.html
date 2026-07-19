@@ -5,7 +5,6 @@
 {% block content %}
 <!-- 1. استدعاء مكتبات ميسر الرسمية بالتوافق مع المتصفحات الحديثة -->
 <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" />
-<script src="https://polyfill.io/v3/polyfill.min.js?features=fetch"></script>
 <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
 
 <div class="container my-5 text-end" dir="rtl">
@@ -29,7 +28,7 @@
                 <!-- حاوية إظهار الأخطاء الفورية للـ JavaScript إن وجدت -->
                 <div id="moyasar-debug-error" class="alert alert-danger d-none my-2"></div>
 
-                <!-- 2. الحاوية الرسمية لنموذج ميسر (يجب استخدام class بالتوافق مع مكتبة Moyasar) -->
+                <!-- 2. الحاوية الرسمية لنموذج ميسر -->
                 <div class="mysr-form"></div>
 
             </div>
@@ -69,11 +68,12 @@
                 description: 'حجز سيارة رقم {{ booking.id }} - {{ request.user.username }}',
                 publishable_api_key: '{{ moyasar_publishable_key }}',
                 callback_url: callbackUrl,
-                methods: ['creditcard', 'stcpay']
+                // تم إدراج mada صراحة بدلاً من stcpay لضمان عدم ارتباك المتصفح في وضع الفحص التجريبي
+                methods: ['creditcard', 'mada']
             });
             console.log("✅ تم تشغيل وربط ميسر بالواجهة بنجاح!");
             
-            // احتياطاً: تتبع أي عناصر نموذج ديناميكية وتعديل الـ target
+            // تتبع عناصر النموذج الديناميكية وتعديل الـ target تلقائياً إلى _self
             const targetNode = document.querySelector('.mysr-form');
             if (targetNode) {
                 const observer = new MutationObserver(function(mutations) {
