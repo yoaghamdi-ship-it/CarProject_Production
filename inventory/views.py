@@ -251,7 +251,7 @@ def payment_callback(request):
     # طباعة لوق للفحص في Render
     logger.info(f"Moyasar Callback - ID: {payment_id}, Status: {status}")
 
-    try {
+    try :
         if status == 'paid':
             # 1. البحث عن الحجز المعلق الأحدث (أو يمكنك تمرير رقم الحجز مباشرة من ميسر إذا كنت قد ربطته)
             # هنا سنبحث عن الحجز المعلق الأحدث لضمان دقة العمل بدون الاعتماد على Session
