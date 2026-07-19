@@ -13,6 +13,8 @@ from django.db.models import Min, Q, IntegerField
 from django.apps import apps 
 from django.db.models.functions import Cast
 from django.views.generic import TemplateView
+from django.views.decorators.csrf import csrf_exempt
+import requests
 import re
 import json
 import logging
@@ -240,52 +242,53 @@ def payment_success(request, booking_id):
 
 
 # 9. استقبال رد بوابة الدفع ميسر
+@csrf_exempt  # ضروري جداً لمنع حظر الطلبات الخارجية القادمة من ميسر
 def payment_callback(request):
     payment_id = request.GET.get('id')
     status = request.GET.get('status')
     message = request.GET.get('message')
-    car_id = request.session.get('pending_car_id')
     
-    try:
+    # طباعة لوق للفحص في Render
+    logger.info(f"Moyasar Callback - ID: {payment_id}, Status: {status}")
+
+    try {
         if status == 'paid':
-            if not car_id:
-                booking = Booking.objects.filter(status='pending').order_by('-id').first()
-                car = booking.car if booking else None
-            else:
-                car = Car.objects.filter(id=car_id).first()
+            # 1. البحث عن الحجز المعلق الأحدث (أو يمكنك تمرير رقم الحجز مباشرة من ميسر إذا كنت قد ربطته)
+            # هنا سنبحث عن الحجز المعلق الأحدث لضمان دقة العمل بدون الاعتماد على Session
+            booking = Booking.objects.filter(status='pending').order_by('-id').first()
             
-            if car:
-                car.status = 'booked'
-                car.is_available = False
-                car.save()
+            if booking:
+                car = booking.car
+                # تحديث حالة السيارة
+                if car:
+                    car.status = 'booked'
+                    car.is_available = False
+                    car.save()
                 
-                booking = Booking.objects.filter(car=car, status='pending').last()
-                if booking:
-                    booking.status = 'paid'
-                    booking.deposit_paid_at = timezone.now()
-                    booking.save()
-                else:
-                    user = request.user if request.user.is_authenticated else None
-                    if not user:
-                        last_b = Booking.objects.filter(car=car).last()
-                        user = last_b.user if last_b else None
-                    
-                    booking = Booking.objects.create(
-                        user=user,
-                        car=car,
-                        status='paid',
-                        amount_paid=1000,
-                        deposit_paid_at=timezone.now()
-                    )
+                # تحديث حالة الحجز
+                booking.status = 'paid'
+                booking.deposit_paid_at = timezone.now()
+                # حفظ رقم الدفع القادم من ميسر للتوثيق مستقبلاً
+                if hasattr(booking, 'payment_id'): 
+                    booking.payment_id = payment_id
+                booking.save()
                 
+                # تنظيف الجلسة احتياطياً لو كانت متاحة
                 request.session.pop('pending_car_id', None)
+                
                 return redirect('inventory:payment_success', booking_id=booking.id)
+            else:
+                # خطة بديلة إذا لم يعثر على حجز معلق
+                logger.error("No pending booking found for this callback.")
+                messages.error(request, "لم يتم العثور على حجز معلق، يرجى التواصل مع الدعم.")
+                return redirect('inventory:index')
                 
     except Exception as e:
         logger.error(f"Payment callback failed: {str(e)}")
-        messages.success(request, "تم الدفع وتأكيد حجز السيارة بنجاح!")
+        # في حال حدوث خطأ غير متوقع ولكن حالة الدفع paid، نؤمن العميل
         return redirect('inventory:index')
 
+    # إذا فشل الدفع
     return render(request, 'inventory/payment_failed.html', {'message': message})
 
 
