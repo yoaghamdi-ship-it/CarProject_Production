@@ -39,26 +39,29 @@
 
 <!-- 3. سكربت تشغيل بوابة ميسر البيئي والآمن -->
 <script>
+    // 🛠️ حيلة إجبارية: إعادة توجيه دالة window.open لتفتح في نفس الصفحة بدلاً من تبويب جديد
+    window.open = function (url, target, features) {
+        window.location.href = url;
+        return window;
+    };
+
     document.addEventListener("DOMContentLoaded", function () {
         const errorDiv = document.getElementById('moyasar-debug-error');
         
-        // بناء رابط الاستجابة (Callback URL) ديناميكياً لتجنب مشاكل الهوست وبروتوكولات الـ Mixed Content
         var currentHost = window.location.origin; 
         var callbackUrl = currentHost + "{% url 'inventory:payment_callback' %}";
         
-        // طباعة معلومات الفحص الفوري في متصفحك (Console)
         console.log("=== Moyasar Debugging ===");
         console.log("Amount in halalas:", {{ amount_in_halalas|default:100000 }});
         console.log("Publishable Key Exists:", "{{ moyasar_publishable_key }}" ? "Yes" : "No");
         console.log("Callback URL configured:", callbackUrl);
 
         try {
-            // التحقق من أن المتصفح لم يمنع تحميل ملفات ميسر الخارجية
             if (typeof Moyasar === 'undefined') {
-                throw new Error("لم يتم تحميل مكتبة ميسر من خوادمها بنجاح. قد يكون بسبب إضافات حجب الإعلانات (AdBlocker) أو جدار الحماية في متصفحك.");
+                throw new Error("لم يتم تحميل مكتبة ميسر من خوادمها بنجاح.");
             }
 
-            // تشغيل نموذج ميسر التفاعلي لبيانات البطاقة
+            // تشغيل نموذج ميسر التفاعلي
             Moyasar.init({
                 element: '.mysr-form',
                 amount: {{ amount_in_halalas|default:100000 }},
@@ -66,29 +69,29 @@
                 description: 'حجز سيارة رقم {{ booking.id }} - {{ request.user.username }}',
                 publishable_api_key: '{{ moyasar_publishable_key }}',
                 callback_url: callbackUrl,
-                methods: ['creditcard', 'stcpay'] // نكتفي بـ creditcard و stcpay للتأكد من استقرار عمل الواجهة أولاً
+                methods: ['creditcard', 'stcpay']
             });
             console.log("✅ تم تشغيل وربط ميسر بالواجهة بنجاح!");
             
-            // 🛠️ كود تتبع النموذج وتعديل سلوك الـ target لفتح التبويب في نفس الصفحة قسراً
+            // احتياطاً: تتبع أي عناصر نموذج ديناميكية وتعديل الـ target
             const targetNode = document.querySelector('.mysr-form');
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    const forms = targetNode.querySelectorAll('form');
-                    forms.forEach(function(form) {
-                        if (form.getAttribute('target') === '_blank') {
-                            form.setAttribute('target', '_self');
-                            console.log("🛠️ تم كسر حماية ميسر وإجبار النموذج على الفتح في نفس الصفحة!");
-                        }
+            if (targetNode) {
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        const forms = targetNode.querySelectorAll('form');
+                        forms.forEach(function(form) {
+                            if (form.getAttribute('target') === '_blank') {
+                                form.setAttribute('target', '_self');
+                                console.log("🛠️ تم تعديل target النموذج إلى _self");
+                            }
+                        });
                     });
                 });
-            });
-            
-            observer.observe(targetNode, { childList: true, subtree: true });
+                observer.observe(targetNode, { childList: true, subtree: true });
+            }
             
         } catch (error) {
             console.error("❌ فشل في تشغيل ميسر:", error.message);
-            // إظهار الخطأ للمطور مباشرة على الشاشة لحل المشكلة فوراً
             errorDiv.classList.remove('d-none');
             errorDiv.innerHTML = "<strong>تنبيه النظام:</strong> " + error.message;
         }
