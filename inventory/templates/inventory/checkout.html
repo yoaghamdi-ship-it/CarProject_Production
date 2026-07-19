@@ -38,7 +38,7 @@
 
 <!-- 3. سكربت تشغيل بوابة ميسر البيئي والآمن -->
 <script>
-    // 🛠️ حيلة إجبارية: إعادة توجيه دالة window.open لتفتح في نفس الصفحة بدلاً من تبويب جديد
+    // 🛠️ تأمين شامل: إجبار أي محاولة لفتح نافذة جديدة (بما فيها روابط البنوك) على الفتح في نفس الصفحة قسراً
     window.open = function (url, target, features) {
         window.location.href = url;
         return window;
@@ -49,18 +49,13 @@
         
         var currentHost = window.location.origin; 
         var callbackUrl = currentHost + "{% url 'inventory:payment_callback' %}";
-        
-        console.log("=== Moyasar Debugging ===");
-        console.log("Amount in halalas:", {{ amount_in_halalas|default:100000 }});
-        console.log("Publishable Key Exists:", "{{ moyasar_publishable_key }}" ? "Yes" : "No");
-        console.log("Callback URL configured:", callbackUrl);
 
         try {
             if (typeof Moyasar === 'undefined') {
                 throw new Error("لم يتم تحميل مكتبة ميسر من خوادمها بنجاح.");
             }
 
-            // تشغيل نموذج ميسر التفاعلي
+            // تشغيل نموذج ميسر التفاعلي مع ميزة التحكم بالتوجيه
             Moyasar.init({
                 element: '.mysr-form',
                 amount: {{ amount_in_halalas|default:100000 }},
@@ -68,22 +63,33 @@
                 description: 'حجز سيارة رقم {{ booking.id }} - {{ request.user.username }}',
                 publishable_api_key: '{{ moyasar_publishable_key }}',
                 callback_url: callbackUrl,
-                // تم إدراج mada صراحة بدلاً من stcpay لضمان عدم ارتباك المتصفح في وضع الفحص التجريبي
-                methods: ['creditcard', 'mada']
+                methods: ['creditcard', 'mada'],
+                
+                // 🔥 الميزة السرية: عند اكتمال عملية الفحص بنجاح، اجبر المتصفح على الانتقال للرابط في نفس الصفحة
+                on_completed: function (payment) {
+                    if (payment.status === 'initiated' || payment.status === 'captured' || payment.status === 'paid') {
+                        if (payment.source && payment.source.transaction_url) {
+                            // التوجيه لصفحة البنك (3DS) في نفس التبويب تماماً دون فتح نافذة جديدة
+                            window.location.href = payment.source.transaction_url;
+                            return false; // يمنع مكتبة ميسر من التصرف الافتراضي بفتح تبويب
+                        }
+                    }
+                    return true;
+                }
             });
-            console.log("✅ تم تشغيل وربط ميسر بالواجهة بنجاح!");
             
-            // تتبع عناصر النموذج الديناميكية وتعديل الـ target تلقائياً إلى _self
+            // مراقبة حية لـ DOM لقنص أي فورم يتم إنشاؤه ديناميكياً وتعديله لـ _self فوراً
             const targetNode = document.querySelector('.mysr-form');
             if (targetNode) {
                 const observer = new MutationObserver(function(mutations) {
                     mutations.forEach(function(mutation) {
-                        const forms = targetNode.querySelectorAll('form');
+                        const forms = document.querySelectorAll('form');
                         forms.forEach(function(form) {
-                            if (form.getAttribute('target') === '_blank') {
-                                form.setAttribute('target', '_self');
-                                console.log("🛠️ تم تعديل target النموذج إلى _self");
-                            }
+                            form.setAttribute('target', '_self');
+                        });
+                        const links = document.querySelectorAll('.mysr-form a');
+                        links.forEach(function(link) {
+                            link.setAttribute('target', '_self');
                         });
                     });
                 });
