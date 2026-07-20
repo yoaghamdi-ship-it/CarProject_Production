@@ -36,9 +36,9 @@
     </div>
 </div>
 
-<!-- 3. سكربت تشغيل بوابة ميسر البيئي والآمن -->
+<!-- 3. سكربت تشغيل بوابة ميسر وعزل التبويبات الجديدة نهائياً -->
 <script>
-    // 🛠️ تأمين شامل: إجبار أي محاولة لفتح نافذة جديدة (بما فيها روابط البنوك) على الفتح في نفس الصفحة قسراً
+    // خط الدفاع الأول: إغلاق وتوجيه أي محاولة استدعاء لفتح نافذة جديدة بالكامل
     window.open = function (url, target, features) {
         window.location.href = url;
         return window;
@@ -46,58 +46,46 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         const errorDiv = document.getElementById('moyasar-debug-error');
-        
         var currentHost = window.location.origin; 
         var callbackUrl = currentHost + "{% url 'inventory:payment_callback' %}";
 
         try {
             if (typeof Moyasar === 'undefined') {
-                throw new Error("لم يتم تحميل مكتبة ميسر من خوادمها بنجاح.");
+                throw new Error("لم يتم تحميل مكتبة ميسر بنجاح.");
             }
 
-            // تشغيل نموذج ميسر التفاعلي مع ميزة التحكم بالتوجيه
             Moyasar.init({
                 element: '.mysr-form',
                 amount: {{ amount_in_halalas|default:100000 }},
                 currency: 'SAR',
-                description: 'حجز سيارة رقم {{ booking.id }} - {{ request.user.username }}',
+                description: 'حجز سيارة رقم {{ booking.id }}',
                 publishable_api_key: '{{ moyasar_publishable_key }}',
                 callback_url: callbackUrl,
                 methods: ['creditcard', 'mada'],
                 
-                // 🔥 الميزة السرية: عند اكتمال عملية الفحص بنجاح، اجبر المتصفح على الانتقال للرابط في نفس الصفحة
+                // خط الدفاع الثاني: القبض على رابط المعاملة البنكية وتوجيهه فوراً في نفس الصفحة العليا قبل تدخل المتصفح
                 on_completed: function (payment) {
-                    if (payment.status === 'initiated' || payment.status === 'captured' || payment.status === 'paid') {
-                        if (payment.source && payment.source.transaction_url) {
-                            // التوجيه لصفحة البنك (3DS) في نفس التبويب تماماً دون فتح نافذة جديدة
-                            window.location.href = payment.source.transaction_url;
-                            return false; // يمنع مكتبة ميسر من التصرف الافتراضي بفتح تبويب
-                        }
+                    if (payment.source && payment.source.transaction_url) {
+                        console.log("إعادة توجيه صريحة للبنك في نفس التبويب...");
+                        window.top.location.href = payment.source.transaction_url;
+                        return false; // يمنع السلوك الافتراضي لمكتبة ميسر لعدم إنشاء التبويب الجديد
                     }
                     return true;
                 }
             });
-            
-            // مراقبة حية لـ DOM لقنص أي فورم يتم إنشاؤه ديناميكياً وتعديله لـ _self فوراً
-            const targetNode = document.querySelector('.mysr-form');
-            if (targetNode) {
-                const observer = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        const forms = document.querySelectorAll('form');
-                        forms.forEach(function(form) {
-                            form.setAttribute('target', '_self');
-                        });
-                        const links = document.querySelectorAll('.mysr-form a');
-                        links.forEach(function(link) {
-                            link.setAttribute('target', '_self');
-                        });
-                    });
+
+            // خط الدفاع الثالث: فحص ومراقبة مستمرة وسريعة للـ DOM لتغيير أي target خارجي قد يظهر ديناميكياً
+            setInterval(function() {
+                const elements = document.querySelectorAll('.mysr-form form, .mysr-form a, .mysr-form button');
+                elements.forEach(function(el) {
+                    if (el.getAttribute('target') !== '_self') {
+                        el.setAttribute('target', '_self');
+                    }
                 });
-                observer.observe(targetNode, { childList: true, subtree: true });
-            }
-            
+            }, 100); // يفحص كل 100 مللي ثانية للتأكد من القضاء على أي ثغرة تبويب بشكل فوري
+
         } catch (error) {
-            console.error("❌ فشل في تشغيل ميسر:", error.message);
+            console.error("❌ خطأ ميسر:", error.message);
             errorDiv.classList.remove('d-none');
             errorDiv.innerHTML = "<strong>تنبيه النظام:</strong> " + error.message;
         }

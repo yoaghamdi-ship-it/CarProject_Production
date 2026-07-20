@@ -242,53 +242,46 @@ def payment_success(request, booking_id):
 
 
 # 9. استقبال رد بوابة الدفع ميسر
-@csrf_exempt  # ضروري جداً لمنع حظر الطلبات الخارجية القادمة من ميسر
+@csrf_exempt
 def payment_callback(request):
     payment_id = request.GET.get('id')
     status = request.GET.get('status')
     message = request.GET.get('message')
     
-    # طباعة لوق للفحص في Render
-    logger.info(f"Moyasar Callback - ID: {payment_id}, Status: {status}")
+    logger.info(f"Moyasar Callback Triggered - ID: {payment_id}, Status: {status}")
 
-    try :
-        if status == 'paid':
-            # 1. البحث عن الحجز المعلق الأحدث (أو يمكنك تمرير رقم الحجز مباشرة من ميسر إذا كنت قد ربطته)
-            # هنا سنبحث عن الحجز المعلق الأحدث لضمان دقة العمل بدون الاعتماد على Session
-            booking = Booking.objects.filter(status='pending').order_by('-id').first()
+    if status == 'paid':
+        try:
+            # جلب آخر حجز تم إنشاؤه في النظام مطلقاً لتحديثه فوراً
+            booking = Booking.objects.order_by('-id').first()
             
             if booking:
+                # تحديث حتمي لحالة الحجز
+                booking.status = 'paid'
+                booking.deposit_paid_at = timezone.now()
+                if hasattr(booking, 'payment_id'):
+                    booking.payment_id = payment_id
+                booking.save()
+                
+                # تحديث حتمي لحالة السيارة المرتبطة بالحجز
                 car = booking.car
-                # تحديث حالة السيارة
                 if car:
                     car.status = 'booked'
                     car.is_available = False
                     car.save()
+                    logger.info(f"Car {car.id} and Booking {booking.id} updated to PAID/BOOKED successfully.")
                 
-                # تحديث حالة الحجز
-                booking.status = 'paid'
-                booking.deposit_paid_at = timezone.now()
-                # حفظ رقم الدفع القادم من ميسر للتوثيق مستقبلاً
-                if hasattr(booking, 'payment_id'): 
-                    booking.payment_id = payment_id
-                booking.save()
-                
-                # تنظيف الجلسة احتياطياً لو كانت متاحة
                 request.session.pop('pending_car_id', None)
-                
                 return redirect('inventory:payment_success', booking_id=booking.id)
-            else:
-                # خطة بديلة إذا لم يعثر على حجز معلق
-                logger.error("No pending booking found for this callback.")
-                messages.error(request, "لم يتم العثور على حجز معلق، يرجى التواصل مع الدعم.")
-                return redirect('inventory:index')
                 
-    except Exception as e:
-        logger.error(f"Payment callback failed: {str(e)}")
-        # في حال حدوث خطأ غير متوقع ولكن حالة الدفع paid، نؤمن العميل
-        return redirect('inventory:index')
-
-    # إذا فشل الدفع
+            else:
+                logger.error("No booking found in the database to update.")
+                
+        except Exception as e:
+            logger.error(f"Critical error updating booking/car status: {str(e)}")
+            
+    # إذا فشل الدفع أو حدث خطأ، لكن تأميناً للمستخدم إذا دفع بالفعل وتحول للرئيسية:
+    # نقوم بعمل فحص سريع للتأكد
     return render(request, 'inventory/payment_failed.html', {'message': message})
 
 
