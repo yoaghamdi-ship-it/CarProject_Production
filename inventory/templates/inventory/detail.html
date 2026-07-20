@@ -1,138 +1,118 @@
 {% extends "inventory/base.html" %}
 
-{% block title %}{{ car.brand }} {{ car.model_name }} ({{ car.year }}){% endblock %}
+{% block title %}تفاصيل {{ car.brand }} {{ car.model_name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4 text-end" dir="rtl">
+<div class="container my-5 text-end" dir="rtl">
+    
+    <!-- زر العودة للخلف -->
+    <div class="mb-4">
+        <a href="{% url 'inventory:index' %}" class="btn btn-outline-secondary rounded-3">
+            <i class="fas fa-arrow-right ms-2"></i> العودة للرئيسية
+        </a>
+    </div>
 
-    <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-5">
-        <div class="row g-0">
-            <div class="col-md-6 bg-light d-flex align-items-center justify-content-center p-3">
+    <div class="row g-4">
+        <!-- قسم صور السيارة -->
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 {% if car.image %}
-                    <img src="{{ car.image.url }}" class="img-fluid rounded-3 shadow-sm object-fit-cover w-100" style="max-height: 400px;" alt="{{ car.brand }}">
+                    <img src="{{ car.image.url }}" class="img-fluid w-100" alt="{{ car.brand }} {{ car.model_name }}" style="max-height: 450px; object-fit: cover;">
                 {% else %}
-                    <div class="text-center text-muted py-5">
-                        <i class="fas fa-car fa-5x mb-3 opacity-25"></i>
-                        <p class="mb-0">لا توجد صورة متوفرة للسيارة</p>
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 350px;">
+                        <i class="fas fa-car fa-4x text-muted"></i>
                     </div>
                 {% endif %}
             </div>
-
-            <div class="col-md-6 p-4 d-flex flex-column justify-content-between">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="fw-bold text-dark mb-0">{{ car.brand }} {{ car.model_name }}</h2>
-                        <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill">{{ car.year }}</span>
-                    </div>
-
-                    <h3 class="text-success fw-bold mb-4">{{ car.price }} ريال</h3>
-
-                    <ul class="list-group list-group-flush mb-4">
-                        <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-                            <span class="text-muted"><i class="fas fa-barcode me-2 text-secondary"></i> رقم المخزن/القطع:</span>
-                            <strong class="text-dark">{{ car.inventory.id }}</strong>
-                        </li>
-                        <li class="list-group-item bg-transparent px-0 d-flex justify-content-between">
-                            <span class="text-muted"><i class="fas fa-check-circle me-2 text-secondary"></i> الحالة:</span>
-                            <strong class="text-dark">متوفرة في المعرض</strong>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="d-flex gap-2 mt-3 align-items-center">
-                    <form action="{% url 'inventory:book_car' car.id %}" method="post" class="flex-grow-1 m-0">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success w-100 py-2.5 fw-bold shadow-sm rounded-3">
-                            <i class="fas fa-key me-1"></i> احجز السيارة الآن
-                        </button>
-                    </form>
-
-                    <a href="{% url 'inventory:toggle_wishlist' car.id %}" class="btn btn-outline-danger px-3 py-2.5 rounded-3" title="إضافة للمفضلة">
-                        <i class="fas fa-heart"></i>
-                    </a>
-                </div>
-            </div>
         </div>
-    </div>
 
-    <div class="card p-4 shadow-sm border-0 rounded-4 bg-white mb-5">
-        <h4 class="fw-bold text-dark mb-4 border-bottom pb-3">
-            <i class="fas fa-comments text-warning me-2"></i> الاستفسارات والتعليقات على هذه السيارة
-        </h4>
-
-        {% if user.is_authenticated %}
-            <form action="{% url 'inventory:add_comment' car.id %}" method="post" class="mb-5 bg-light p-3 rounded-3 shadow-sm">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label fw-bold text-dark">أضف استفسارك أو تعليقك:</label>
-                    <textarea name="text" class="form-control rounded-3 p-2.5" rows="3" placeholder="اكتب تعليقك أو استفسارك حول السيارة هنا..." required></textarea>
-                </div>
-                <button type="submit" class="btn btn-warning fw-bold text-dark rounded-pill px-4 shadow-sm">
-                    <i class="fas fa-paper-plane me-1"></i> إرسال التعليق
-                </button>
-            </form>
-        {% else %}
-            <div class="alert alert-info rounded-3 text-center mb-4">
-                <i class="fas fa-info-circle me-1"></i> يرجى <a href="{% url 'inventory:login' %}" class="fw-bold text-dark text-decoration-underline">تسجيل الدخول</a> للتمكن من إضافة تعليق.
-            </div>
-        {% endif %}
-
-        <div class="comments-list">
-            {% for comment in car.inventory.comments.all %}
-                <div class="p-3 mb-3 bg-light rounded-3 shadow-sm border-end border-5 {% if comment.reply %}border-info{% else %}border-warning{% endif %}">
-                    
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+        <!-- قسم تفاصيل وبيانات السيارة -->
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 d-flex flex-column justify-content-between">
+                
+                <div>
+                    <!-- العنوان الرئيسي للسيارة -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <strong class="text-dark">
-                                <i class="fas fa-user-circle text-secondary me-1"></i> {{ comment.user.username }}
-                            </strong>
+                            <h2 class="fw-bold text-dark mb-1">{{ car.brand }}</h2>
+                            <h4 class="text-muted">{{ car.model_name }} | {{ car.year }}</h4>
                         </div>
                         
-                        <div class="d-flex align-items-center gap-2">
-                            {% if comment.reply %}
-                                <span class="badge bg-success text-white rounded-pill"><i class="fas fa-check-circle me-1"></i> تم الرد</span>
+                        <!-- 🔥 التعديل الجوهري: فحص حالة السيارة وعرض الشارة المناسبة بدقة قاطعة -->
+                        <div>
+                            {% if car.status == 'booked' or not car.is_available %}
+                                <span class="badge bg-danger fs-6 p-2 rounded-3 shadow-sm">
+                                    <i class="fas fa-lock ms-1"></i> الحالة: محجوزة
+                                </span>
                             {% else %}
-                                <span class="badge bg-warning text-dark rounded-pill"><i class="fas fa-clock me-1"></i> قيد الانتظار</span>
+                                <span class="badge bg-success fs-6 p-2 rounded-3 shadow-sm">
+                                    <i class="fas fa-check-circle ms-1"></i> الحالة: متوفرة في المعرض
+                                </span>
                             {% endif %}
-
-                            <small class="text-muted">
-                                <i class="far fa-clock me-1"></i> {{ comment.created_at|date:"Y-m-d H:i" }}
-                            </small>
                         </div>
                     </div>
 
-                    <p class="mb-0 text-secondary px-2" style="font-size: 15px; line-height: 1.6;">
-                        {{ comment.text }}
-                    </p>
+                    <hr class="text-muted my-3">
 
-                    {% if comment.reply %}
-                        <div class="bg-white p-3 rounded-3 border-start border-info border-4 mt-3 ms-3 shadow-sm">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <strong class="text-info" style="font-size: 14px;">
-                                    <i class="fas fa-user-shield me-1"></i> رد إدارة المعرض:
-                                </strong>
-                                {% if comment.replied_at %}
-                                    <small class="text-muted" style="font-size: 11px;">
-                                        <i class="far fa-clock me-1"></i> {{ comment.replied_at|date:"Y-m-d H:i" }}
-                                    </small>
-                                {% endif %}
+                    <!-- السعر والعربون -->
+                    <div class="row g-2 mb-4 text-center">
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded-3 border">
+                                <small class="text-muted d-block mb-1">السعر الإجمالي</small>
+                                <span class="fs-4 fw-bold text-dark">{{ car.price }} ريال</span>
                             </div>
-                            <p class="mb-0 text-dark px-1 mt-1" style="font-size: 14px; line-height: 1.5; white-space: pre-line;">
-                                {{ comment.reply }}
-                            </p>
                         </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+                                <small class="text-success d-block mb-1">العربون المطلوب</small>
+                                <span class="fs-4 fw-bold text-success">{{ car.deposit_amount|default:"1,000" }} ريال</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- جدول المواصفات الفنية -->
+                    <h5 class="fw-bold mb-3 text-secondary"><i class="fas fa-info-circle ms-2"></i>المواصفات الفنية</h5>
+                    <table class="table table-striped table-hover border rounded-3 overflow-hidden align-middle">
+                        <tbody>
+                            <tr>
+                                <td class="text-muted fw-bold"><i class="fas fa-tachometer-alt ms-2 text-muted"></i> الممشى (كيلومتر):</td>
+                                <td class="fw-bold text-dark">{{ car.mileage|default:"0" }} كم</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-bold"><i class="fas fa-cogs ms-2 text-muted"></i> نوع القير (ناقل الحركة):</td>
+                                <td class="fw-bold text-dark">{{ car.transmission|default:"أوتوماتيك" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-bold"><i class="fas fa-gas-pump ms-2 text-muted"></i> نوع الوقود:</td>
+                                <td class="fw-bold text-dark">{{ car.fuel_type|default:"بنزين" }}</td>
+                            </tr>
+                            {% if car.color %}
+                            <tr>
+                                <td class="text-muted fw-bold"><i class="fas fa-palette ms-2 text-muted"></i> اللون الخارجي:</td>
+                                <td class="fw-bold text-dark">{{ car.color }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 🔥 التعديل الجوهري الثاني: التحكم في زر الحجز بناءً على حالة المعاملة الفوقية للسيارة -->
+                <div class="mt-4">
+                    {% if car.status == 'booked' or not car.is_available %}
+                        <!-- زر معطل عند حجز السيارة -->
+                        <button class="btn btn-secondary w-100 py-3 rounded-3 fw-bold fs-5 shadow-sm" disabled style="cursor: not-allowed;">
+                            <i class="fas fa-ban ms-2"></i> عذراً، هذه السيارة محجوزة حالياً
+                        </button>
+                    {% else %}
+                        <!-- زر نشط متاح للحجز الفوري -->
+                        <a href="{% url 'inventory:book_car' car.id %}" class="btn btn-success w-100 py-3 rounded-3 fw-bold fs-5 shadow-md">
+                            <i class="fas fa-car-side ms-2"></i> احجز السيارة الآن وسدد العربون
+                        </a>
                     {% endif %}
+                </div>
 
-                </div>
-            {% empty %}
-                <div class="text-center py-4 text-muted">
-                    <i class="far fa-comments fa-3x opacity-25 mb-2"></i>
-                    <p class="mb-0">لا توجد تعليقات على هذه السيارة بعد. كن أول من يسأل!</p>
-                </div>
-            {% endfor %}
+            </div>
         </div>
-
     </div>
-
 </div>
 {% endblock %}
