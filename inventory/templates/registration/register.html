@@ -1,0 +1,81 @@
+{% extends 'inventory/base.html' %}
+{% block title %}إنشاء حساب جديد | معرض السيارات{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <!-- بطاقة تسجيل الحساب بتصميم متناسق مع المعرض -->
+        <div class="card shadow-sm border-0 rounded-3 p-4 mt-4 bg-white">
+            <div class="text-center mb-4">
+                <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                <h3 class="fw-bold text-dark" style="font-family: 'Cairo', sans-serif;">إنشاء حساب جديد</h3>
+                <p class="text-muted small">انضم إلينا للاستفادة من ميزات الحجز والمفضلة</p>
+            </div>
+
+            <!-- نموذج إرسال البيانات لدجانغو -->
+            <form method="post" class="text-end">
+                {% csrf_token %}
+                
+                <!-- عرض حقول النموذج الجاهز بطريقة منسقة -->
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-semibold text-secondary small">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text text-muted x-small" style="font-size: 0.75rem;">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="text-danger small mt-1"><i class="fas fa-exclamation-circle me-1"></i> {{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <!-- زر تأكيد التسجيل -->
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-3 shadow-sm">
+                    <i class="fas fa-check-circle me-1"></i> تسجيل وتفعيل الحساب
+                </button>
+            </form>
+
+            <hr class="text-muted my-4">
+
+            <div class="text-center">
+                <span class="text-muted small">لديك حساب بالفعل؟</span>
+                <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none ms-1 small">تسجيل الدخول من هنا</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* تحسين مظهر حقول الإدخال الافتراضية من دجانغو لتتوافق مع Bootstrap */
+    form input[type="text"], form input[type="password"], form input[type="email"] {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.95rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    form input:focus {
+        color: #212529;
+        background-color: #fff;
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    /* تنسيق القوائم النقطية لشروط كلمة المرور الافتراضية في دجانغو */
+    form ul {
+        padding-right: 1.2rem;
+        margin-top: 5px;
+        color: #6c757d;
+        font-size: 0.75rem;
+        list-style-type: square;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}سياراتي المفضلة{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-end" dir="rtl">
+    
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark">
+            <i class="fas fa-heart text-danger me-2"></i> قائمة السيارات المفضلة
+        </h2>
+        <p class="text-muted">السيارات التي قمت بحفظها للرجوع إليها ومقارنتها لاحقاً</p>
+    </div>
+
+    <div class="row g-4">
+        {% for car in cars %}
+            <div class="col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative bg-white transition-hover">
+                    
+                    <div style="height: 200px; background: #f8f9fa;" class="position-relative">
+                        {% if car.image %}
+                            <img src="{{ car.image.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ car.brand }}">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                <i class="fas fa-car fa-4x opacity-25"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <a href="{% url 'inventory:toggle_wishlist' car.id %}" class="btn btn-danger btn-sm">
+                                إزالة من المفضلة            
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="badge bg-light text-secondary mb-2 px-3 py-1 rounded-pill">{{ car.year }}</span>
+                            <h5 class="card-title fw-bold text-dark mb-3">{{ car.brand }} {{ car.model_name }}</h5>
+                            
+                            <div class="d-flex gap-3 text-muted small mb-4">
+                                <span><i class="fas fa-cog text-success me-1"></i> {{ car.transmission|default:"أوتوماتيك" }}</span>
+                                <span><i class="fas fa-gas-pump text-success me-1"></i> بنزين</span>
+                            </div>
+                        </div>
+
+                        <div class="border-top pt-3 mt-2 d-flex align-items-center justify-content-between">
+                            <div>
+                                <span class="text-muted small d-block">السعر</span>
+                                <strong class="text-success h5 mb-0 fw-bold">{{ car.price }} <span class="small" style="font-size: 12px;">ريال</span></strong>
+                            </div>
+                            
+                            <a href="{% url 'inventory:car_detail' car.id %}" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-bold">
+                                عرض التفاصيل <i class="fas fa-chevron-left ms-1" style="font-size: 10px;"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5 my-5">
+                <div class="text-muted">
+                    <i class="far fa-heart fa-4x text-muted opacity-25 mb-3"></i>
+                    <h4 class="fw-bold text-dark">قائمة المفضلة فارغة حالياً</h4>
+                    <p class="mb-4">لم تقم بإضافة أي سيارات إلى مفضلتك بعد. تصفح المعرض واختر سيارة أحلامك!</p>
+                    <a href="{% url 'index' %}" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="fas fa-search me-1"></i> تصفح السيارات الآن
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<style>
+    .transition-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الدفع - معرض السيارات</title>
+    <!-- Bootstrap لتنسيق الصفحة بشكل سريع -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- مكتبة ميسر CSS -->
+    <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.13.0/moyasar.css" />
+    
+    <style>
+        body { background-color: #f8f9fa; }
+        .payment-container { max-width: 500px; margin-top: 50px; }
+        .card { border: none; border-radius: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container payment-container">
+    <div class="card shadow">
+        <div class="card-body p-4">
+            <h3 class="text-center mb-4">بوابة الدفع الآمنة</h3>
+            <div class="alert alert-secondary text-center mb-4">
+                حجز سيارة: <strong>{{ car.brand }}</strong><br>
+                المبلغ: <strong>{{ amount|add:"0" }} هللة</strong>
+            </div>
+
+            <!-- مكان ظهور نموذج البطاقة الخاص بميسر -->
+            <div class="mysr-form"></div>
+
+            <div class="text-center mt-4">
+                <a href="{% url 'car_detail' car.id %}" class="text-decoration-none text-muted">إلغاء والعودة</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مكتبات ميسر JS -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=fetch"></script>
+<script src="https://cdn.moyasar.com/mpf/1.13.0/moyasar.js"></script>
+
+<script>
+  // تأكد أن المفتاح يبدأ بـ pk_test_
+  Moyasar.init({
+    element: '.mysr-form',
+    amount: {{ amount }},
+    currency: 'SAR',
+    description: '{{ description }}',
+    publishable_api_key: '{{ publishable_key }}',
+    callback_url: '{{ callback_url }}',
+    methods: ['creditcard']
+  })
+</script>
+
+</body>
+</html>

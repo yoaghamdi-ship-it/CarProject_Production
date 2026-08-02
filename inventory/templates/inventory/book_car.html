@@ -1,0 +1,101 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}إتمام حجز {{ car.brand }} {{ car.model_name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-end" dir="rtl">
+    
+    <!-- زر العودة لصفحة تفاصيل السيارة -->
+    <div class="mb-4">
+        <a href="/car/{{ car.id }}/" class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-bold">
+            <i class="fas fa-arrow-right me-1"></i> العودة لتفاصيل السيارة
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- 1. قسم ملخص تفاصيل السيارة المحجوزة -->
+        <div class="col-md-5 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h4 class="fw-bold text-dark mb-4">
+                    <i class="fas fa-clipboard-list text-success me-2"></i> ملخص الطلب
+                </h4>
+                
+                <!-- صورة مصغرة للسيارة -->
+                <div class="rounded-3 overflow-hidden mb-3" style="height: 200px; background: #f8f9fa;">
+                    {% if car.image %}
+                        <img src="{{ car.image.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ car.brand }}">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                            <i class="fas fa-car fa-4x opacity-25"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <h5 class="fw-bold text-dark mb-1">{{ car.brand }} {{ car.model_name }}</h5>
+                <p class="text-muted small mb-4">موديل السنة: {{ car.year }} | ناقل الحركة: {{ car.transmission|default:"أوتوماتيك" }}</p>
+                
+                <!-- تفاصيل الحساب المالي -->
+                <div class="bg-light p-3 rounded-3 mt-auto">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">قيمة الحجز / الدفعة الأولى:</span>
+                        <strong class="text-dark">{{ car.price }} ريال</strong>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                        <span class="fw-bold text-dark">المجموع الكلي:</span>
+                        <h4 class="fw-bold text-success mb-0">{{ car.price }} <span class="h6">ريال</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. قسم بوابة الدفع الإلكتروني الآمنة -->
+        <div class="col-md-7 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h4 class="fw-bold text-dark mb-2">
+                    <i class="fas fa-shield-alt text-success me-2"></i> الدفع الإلكتروني الآمن
+                </h4>
+                <p class="text-muted small mb-4">يرجى إدخال بيانات بطاقتك الائتمانية أو بطاقة مدى لإتمام الحجز اللحظي بنجاح.</p>
+                
+                <!-- حاوية استمارة بوابة ميسر التي سيتم حقنها عبر الـ JavaScript -->
+                <div class="mysr-form shadow-sm p-3 rounded-3 border"></div>
+                
+                <div class="mt-4 text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-lock me-1 text-success"></i> جميع المعاملات المالية مشفرة وآمنة بنسبة 100% ومتوافقة مع المعايير السعودية.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- 🌟 ربط مكتبات بوابة دفع ميسر (Moyasar) المحدثة 🌟 -->
+<!-- ======================================================= -->
+<link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.13.0/moyasar.css" />
+<script src="https://cdn.moyasar.com/mpf/1.13.0/moyasar.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    Moyasar.init({
+      element: '.mysr-form',
+      
+      // تحويل السعر ديناميكياً من دجانغو إلى هللات (ميسر تطلب السعر بالهللة)
+      amount: {{ car.price }} * 100, 
+      currency: 'SAR',
+      description: 'حجز سيارة {{ car.brand }} {{ car.model_name }} - موديل {{ car.year }}',
+
+      // ⚠️ استبدل هذا المفتاح بمفتاحك التجريبي الفعلي من لوحة تحكم ميسر pk_test_...
+      publishable_api_key: 'pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3',
+
+      // الرابط الذي سيعود إليه العميل بعد نجاح عملية الدفع في البنك
+      callback_url: window.location.origin + '/payment/callback/',
+
+      // تفعيل خيار بطاقات الائتمان ومدى بشكل أساسي ومستقر
+      methods: ['creditcard']
+    });
+  });
+</script>
+<!-- ======================================================= -->
+
+{% endblock %}

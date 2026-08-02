@@ -1,0 +1,51 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}آراء واستفسارات العملاء{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-end" dir="rtl">
+    <div class="card p-4 shadow-sm border-0 rounded-4 bg-white">
+        <h2 class="fw-bold mb-4 text-dark text-center">
+            <i class="fas fa-comments text-success me-2"></i> سجل التعليقات العامة في المنصة
+        </h2>
+        <p class="text-muted text-center mb-5">هنا تجد آخر استفسارات العملاء والردود عليها في الموقع</p>
+
+        <div class="comments-feed">
+            {% for comment in comments_list %}
+                <div class="card p-3 mb-3 border-0 bg-light rounded-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <strong class="text-dark">
+                                <i class="fas fa-user-circle text-secondary me-1"></i> {{ comment.user.username }}
+                            </strong>
+                            <span class="text-muted small ms-2">علّق على:</span>
+                            <!-- رابط يأخذ المستخدم لصفحة السيارة التي تم التعليق عليها -->
+                            {% if comment.inventory.inventory_cars.all %}
+                                {% with car=comment.inventory.inventory_cars.all.0 %}
+                                    <a href="{% url 'car_detail' car.id %}" class="fw-bold text-success text-decoration-none">
+                                        {{ car.brand }} {{ car.model_name }} ({{ car.year }})
+                                    </a>
+                                {% endwith %}
+                            {% else %}
+                                <span class="text-muted fw-bold">سيارة في المخزن</span>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">
+                            <i class="far fa-clock me-1"></i> {{ comment.created_at|date:"Y-m-d H:i" }}
+                        </small>
+                    </div>
+                    <p class="mb-0 mt-3 text-secondary px-3" style="font-size: 16px; line-height: 1.6;">
+                        {{ comment.text }}
+                    </p>
+                </div>
+            {% empty %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-comment-slash fa-3x opacity-25 mb-3"></i>
+                    <h5 class="fw-bold">لا توجد تعليقات في الموقع بعد</h5>
+                    <p class="mb-0">تصفح السيارات وكن أول من يكتب استفساراً!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

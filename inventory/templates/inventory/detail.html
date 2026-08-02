@@ -1,0 +1,121 @@
+{% extends "inventory/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- قسم تفاصيل السيارة (الصور والبيانات) -->
+        <div class="col-md-7">
+            <h1 class="fw-bold text-dark mb-2">{{ car.brand }} {{ car.model_name }}</h1>
+            <p class="text-muted fs-5 mb-4">موديل: {{ car.year }} | العائلة: {{ car.get_category_display }}</p>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-0 text-center bg-light rounded">
+                    {% if car.image %}
+                        <img src="{{ car.image.url }}" class="img-fluid rounded" alt="{{ car.brand }}" style="max-height: 400px; object-fit: contain;">
+                    {% else %}
+                        <div class="py-5 text-muted"><i class="bi bi-car-front display-1"></i><br>لا توجد صورة متاحة</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h4 class="fw-bold mb-3">المواصفات الأساسية</h4>
+            <table class="table table-striped table-hover border">
+                <tbody>
+                    <tr><td><b>السعر الإجمالي:</b></td><td class="text-primary fw-bold">{{ car.price }} ريال</td></tr>
+                    <tr><td><b>مبلغ العربون المطلوب لتأمين الحجز:</b></td><td class="text-success fw-bold">1,000 ريال (لمدة 24 ساعة)</td></tr>
+                    <tr><td><b>الحالة الحالية:</b></td><td>{{ car.get_status_display }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- قسم الحجز وبوابة الدفع -->
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card-body p-4">
+                    
+                    <!-- 1️⃣ إذا كانت السيارة مَحجوزة بالعربون -->
+                    {% if is_booked %}
+                        
+                        <div class="text-center py-4">
+                            <div class="display-4 text-warning mb-3">
+                                <i class="bi bi-shield-lock-fill"></i> 🔒
+                            </div>
+                            <h4 class="fw-bold text-dark mb-3">السيارة محجوزة حالياً</h4>
+                            
+                            <div class="alert alert-warning text-start" style="font-size: 0.95rem;">
+                                <strong>تنبيه الحجز المؤقت:</strong> تم دفع عربون تأمين هذه السيارة (1,000 ريال) بنجاح. السيارة الآن محمية وغير متاحة لأي عميل آخر لمدة 24 ساعة لحين استكمال بقية مبلغ الإيجار.
+                            </div>
+                            
+                            <button class="btn btn-secondary btn-lg w-100 mt-2" disabled>
+                                غير متاحة للحجز حالياً
+                            </button>
+                            <a href="{% url 'index' %}" class="btn btn-outline-primary w-100 mt-2">العودة للرئيسية وتصفح سيارات أخرى</a>
+                        </div>
+
+                    <!-- 2️⃣ إذا كانت السيارة متاحة وغير محجوزة -->
+                    {% else %}
+                        
+                        <h4 class="fw-bold text-dark mb-2">تأكيد الحجز الفوري</h4>
+                        <p class="text-muted small mb-4">سيتم سحب مبلغ <b>1,000 ريال فقط</b> كعربون مسترد لتأمين السيارة لحسابك.</p>
+
+                        <div class="p-3 bg-light rounded border text-center mb-3">
+                            <p class="small text-muted mb-0"><i class="bi bi-shield-check text-success"></i> بوابة دفع ميسر آمنة ومشفرة</p>
+                        </div>
+                        
+                        <!-- حاوية الدفع القياسية البسيطة -->
+                        <div class="mysr-form"></div>
+
+                        <!-- استدعاء ملفات ميسر مع تفعيل خاصية التأجيل البرمجي defer لضمان استقرار الصفحة أولاً -->
+                        <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.12.0/moyasar.css" />
+                        <script src="https://polyfill.io/v3/polyfill.min.js?features=fetch" defer></script>
+                        <script src="https://cdn.moyasar.com/mpf/1.12.0/moyasar.js" defer></script>
+
+                        <!-- السكربت التنفيذي محمي بانتظار تحميل نافذة المتصفح بالكامل -->
+                        <script>
+                          window.addEventListener('load', function () {
+                            try {
+                              Moyasar.init({
+                                element: '.mysr-form', // نستخدم الكلاس القياسي لميسر لضمان التعرف التلقائي
+                                amount: 100000, // 1000 ريال بالهللة
+                                currency: 'SAR',
+                                description: 'عربون حجز سيارة: {{ car.brand }} {{ car.model_name }}',
+                                publishable_api_key: 'pk_test_VP5cwmVp2Z5qRW4Ha97jyB9BKjiZTW7KPadLgvH3',
+                                callback_url: 'http://127.0.0.1:8000/payment/callback/',
+                                methods: ['creditcard', 'stcpay'],
+                                
+                                on_completed: function (payment) {
+                                  window.location.href = 'http://127.0.0.1:8000/payment/callback/?id=' + payment.id + '&status=' + payment.status + '&message=' + payment.message;
+                                }
+                              });
+                            } catch (e) {
+                              console.error("Moyasar failed to load elements:", e);
+                            }
+                          });
+                        </script>
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- قسم التعليقات -->
+    {% if comments %}
+    <div class="row mt-5">
+        <div class="col-md-7">
+            <h4 class="fw-bold mb-3">آراء العملاء حول هذه السيارة</h4>
+            {% for comment in comments %}
+                <div class="card mb-2 border-0 bg-light shadow-sm">
+                    <div class="card-body">
+                        <p class="mb-1 text-dark">{{ comment.text }}</p>
+                        <small class="text-muted">بواسطة: {{ comment.user.username }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
