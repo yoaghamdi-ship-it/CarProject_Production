@@ -110,14 +110,17 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
+# تأكد أيضاً من وجود مسارات الـ Media في أسفل الملف:
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 
 # 9. إعدادات نظام طبقات القنوات (تصحيح الاسم الإملائي للـ Channels)
 CHANNEL_LAYERS = {
