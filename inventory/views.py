@@ -72,8 +72,11 @@ def index(request):
     ).order_by('price')
 
     for car in available_cars_sorted:
-        # معرفة اسم أو معرف الموديل
-        model_identifier = getattr(car.model, 'id', car.model)
+        # البحث عن اسم الحقل الخاص بالموديل بحسب ما هو معرف في Model لديك
+        model_identifier = getattr(car, 'car_model', None) or \
+                           getattr(car, 'model_year', None) or \
+                           getattr(car, 'name', None) or \
+                           getattr(car, 'title', car.id)
         
         # أخذ أول سيارة تظهر للموديل (لأنها الأرخص) وتجاهل الباقي لنفس الموديل
         if model_identifier not in seen_models:
@@ -102,7 +105,7 @@ def index(request):
 
     context = {
         'cars': cars,
-        'ticker_cars': ticker_cars, # سيمرر أرخص السيارات المفلترة لقالب الـ HTML تلقائياً
+        'ticker_cars': ticker_cars,
     }
     return render(request, 'inventory/index.html', context)
 
