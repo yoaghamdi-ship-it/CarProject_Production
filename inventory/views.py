@@ -58,13 +58,29 @@ def check_expired_bookings():
 def index(request):
     cars = Car.objects.all()
     
-    # فحص الحجوزات لكل السيارات
+    # 1. فحص الحجوزات لكل السيارات
     for car in cars:
         car.is_already_booked = Booking.objects.filter(car=car).exists()
     
-    ticker_cars = [car for car in cars if not car.is_already_booked]
+    # 2. تصفية أرخص سيارة متوفرة (غير محجوزة) لكل موديل لشريط الأسعار
+    ticker_cars = []
+    seen_models = set()
+    
+    # جلب السيارات غير المحجوزة مرتبة من الأرخص للأغلى
+    available_cars_sorted = Car.objects.exclude(
+        id__in=Booking.objects.values_list('car_id', flat=True)
+    ).order_by('price')
 
-    # 🌟 مزامنة وإجبار الداتابيز على تفعيل الألوان الحمراء في المتصفح فوراً
+    for car in available_cars_sorted:
+        # معرفة اسم أو معرف الموديل
+        model_identifier = getattr(car.model, 'id', car.model)
+        
+        # أخذ أول سيارة تظهر للموديل (لأنها الأرخص) وتجاهل الباقي لنفس الموديل
+        if model_identifier not in seen_models:
+            ticker_cars.append(car)
+            seen_models.add(model_identifier)
+
+    # 3. إدارة قائمة المفضلة في السيسشن (الخاص بك كما هو)
     if request.user.is_authenticated:
         if 'wishlist_cars' not in request.session or not request.session['wishlist_cars']:
             favorites = Favorite.objects.filter(user=request.user)
@@ -75,23 +91,20 @@ def index(request):
                     favorite_car_ids.append(fav.car_id)
                 elif hasattr(fav, 'car') and fav.car:
                     favorite_car_ids.append(fav.car.id)
-                else:
+                elif hasattr(fav, 'inventory_id'):
                     favorite_car_ids.append(fav.inventory_id)
             
-            # تخزين الأرقام الحقيقية المعزولة داخل السيسشن
             request.session['wishlist_cars'] = favorite_car_ids
             
-        # 🌟 السطر الحاسم: إجبار دجانغو على تحديث وحفظ الجلسة وإرسالها للـ HTML فوراً
         request.session.modified = True
     else:
         request.session['wishlist_cars'] = []
 
     context = {
         'cars': cars,
-        'ticker_cars': ticker_cars,
+        'ticker_cars': ticker_cars, # سيمرر أرخص السيارات المفلترة لقالب الـ HTML تلقائياً
     }
     return render(request, 'inventory/index.html', context)
-
 
 # 2. قائمة السيارات (محدثة لفلترة المعروض للمتاح فقط وإلغاء تلقائي)
 def car_list(request):
