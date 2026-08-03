@@ -130,7 +130,7 @@ STORAGES = {
 STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'yoaghamdi@gmail.com'),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'megatduj'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '928931488544344'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'VMURLHaeXhDlhqMhHofCMz4wz8U'),
 }
