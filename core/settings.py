@@ -120,6 +120,9 @@ STORAGES = {
     },
 }
 
+# 🌟 سطر التوافق الخاص بـ Cloudinary لتفادي خطأ AttributeError في Django 5+ / 6
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # بيانات الاتصال بـ Cloudinary
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'Root'),
