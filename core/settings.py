@@ -30,8 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'cloudinary_storage',
-    'cloudinary',
     'django.contrib.staticfiles',
+    'cloudinary',
     'rest_framework',
     'inventory',  # تطبيق السيارات الخاص بك
 ]
@@ -111,29 +111,29 @@ USE_TZ = True
 # 8. إعدادات الملفات الثابتة (CSS, JS) وملفات الميديا (صور السيارات المرفوعة)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 🌟 سطر مهم جداً لتحديد التخزين الافتراضي للصور
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        # 🌟 استبدال CompressedStaticFilesStorage بهذا الخيار المستقر
         "BACKEND": "whitenoise.storage.StaticFilesStorage",
     },
 }
 
-# 🌟 سطر التوافق
 STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
 
-# بيانات الاتصال بـ Cloudinary
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'Root'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '928931488544344'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'VMURLHaeXhDlhqMhHofCMz4wz8U'),
 }
-
-# تأكد أيضاً من وجود مسارات الـ Media في أسفل الملف:
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 9. إعدادات نظام طبقات القنوات (تصحيح الاسم الإملائي للـ Channels)
 CHANNEL_LAYERS = {
