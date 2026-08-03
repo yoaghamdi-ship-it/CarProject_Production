@@ -1,0 +1,1502 @@
+- !<Scene/0a1ccb1a-fe88-4fbb-9883-e3af3c75fd99>
+  PackagePath: ""
+  objects:
+    - !<own> 58612dc4-cf9b-4024-9ada-b642fa02f9f9
+    - !<own> 00000000-0000-0065-0000-000000000064
+    - !<own> 0005641c-028d-459a-0000-000000014b4d
+    - !<own> ee1159d0-a585-4e13-bcc8-fb0af2f8f20b
+    - !<own> 5482b33e-cfd9-4ce6-9ac4-b333e09d41bc
+    - !<own> 6f7f0e02-da72-4c56-8a61-8610f3e355b7
+    - !<own> 362c5406-92fa-4419-a2d9-989ef5e58506
+    - !<own> 6d09da99-c4eb-41f3-83c7-7e874c95c427
+  layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
+    userLayers:
+      - id: 9
+        name: Layer 1
+        color: 0
+      - id: 12
+        name: Layer 2
+        color: 1
+      - id: 6
+        name: Layer 3
+        color: 2
+  RenderOutput: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  RenderPreviewOutput: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  RenderOverlayOutput: !<reference> 00000000-0000-0000-0000-000000000000
+  PhysicsRootWorldSettings: !<reference> 00000000-0000-0000-0000-000000000000
+  HiddenInCaptureLayers: 0
+  HiddenInDisplayLayers: 0
+  PrefabPreviewEnvironmentInitialized: false
+  PrefabPreviewEnvironment: !<reference> 00000000-0000-0000-0000-000000000000
+- !<SceneObject/00000000-0000-0065-0000-000000000064>
+  PrefabRemaps:
+    []
+  Name: Camera Object
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 00000000-0000-0065-0000-000000000065
+- !<Camera/00000000-0000-0065-0000-000000000065>
+  PrefabRemaps:
+    []
+  Name: Camera
+  Enabled: true
+  renderLayer: 1
+  MipmapLevel: 0
+  RenderOrder: 0
+  Size: 20.000000
+  Near: 1.000000
+  Far: 1000.000000
+  Fov: 63.541019
+  ClearColor: !<CameraClearColor>
+    Mode: None
+    Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  ClearDepth: !<CameraClearDepth>
+    Mode: Value
+    Value: 1.000000
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Aspect: 1.000000
+  CameraType: Perspective
+  DepthMode: Regular
+  DeviceProperty: All
+  AspectPreset: Custom
+  OitLayers: NoOit
+  RenderTarget: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  DepthStencilRenderTarget: !<reference> 00000000-0000-0000-0000-000000000000
+  MaskTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  RayTracing: !<reference> 00000000-0000-0000-0000-000000000000
+  DevicePropertiesSource: !<reference> 00000000-0000-0000-0000-000000000000
+- !<SceneObject/0005641c-028d-459a-0000-000000014b4d>
+  PrefabRemaps:
+    []
+  Name: Lighting
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 00056e79-b066-62ca-0000-000000001406
+    - !<own> 0005641c-028d-4630-0000-000000014b56
+  Components:
+    []
+- !<SceneObject/0005641c-028d-4630-0000-000000014b56>
+  PrefabRemaps:
+    []
+  Name: Light
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 40.000000, y: 85.000000, z: 20.000000}
+    Rotation: {x: 70.000000, y: 10.000000, z: 150.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 0005641c-028d-463e-0000-000000014b59
+- !<LightSource/0005641c-028d-463e-0000-000000014b59>
+  PrefabRemaps:
+    []
+  Name: Light Source
+  Enabled: true
+  renderLayer: 1310719
+  LightType: Directional
+  Intensity: 1.000000
+  ShadowDensity: 0.440000
+  ShadowBlurRadius: 4.000000
+  ShadowTextureSize: 512
+  AutoLightSourcePosition: true
+  AutoShadowFrustumSize: true
+  AutoShadowFrustumSizeExtend: 2.000000
+  ShadowFrustumSize: 30.000000
+  ShadowFrustumNearClipPlane: 1.000000
+  ShadowFrustumFarClipPlane: 1000.000000
+  UseEnvMapFromCamera: false
+  EnvMapFromCameraMode: Auto
+  EstimationSharpness: 1.000000
+  EnvMapExposure: 1.000000
+  EnvMapRotation: 0.000000
+  DiffuseEnvTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  SpecularEnvTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Color: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowColor: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+  DynamicEnvInputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  InnerConeAngle: 0.000000
+  OuterConeAngle: 45.000000
+  FalloffType: None
+  FalloffRange: .inf
+  ShadowType: None
+- !<SceneObject/00056e79-b066-62ca-0000-000000001406>
+  PrefabRemaps:
+    []
+  Name: Envmap
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 65.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 00056e79-b066-62f1-0000-000000001409
+- !<LightSource/00056e79-b066-62f1-0000-000000001409>
+  PrefabRemaps:
+    []
+  Name: Light Source
+  Enabled: true
+  renderLayer: 1310719
+  LightType: EnvMap
+  Intensity: 1.000000
+  ShadowDensity: 1.000000
+  ShadowBlurRadius: 0.000000
+  ShadowTextureSize: 512
+  AutoLightSourcePosition: false
+  AutoShadowFrustumSize: false
+  AutoShadowFrustumSizeExtend: 2.000000
+  ShadowFrustumSize: 30.000000
+  ShadowFrustumNearClipPlane: 1.000000
+  ShadowFrustumFarClipPlane: 1000.000000
+  UseEnvMapFromCamera: false
+  EnvMapFromCameraMode: Auto
+  EstimationSharpness: 1.000000
+  EnvMapExposure: 1.000000
+  EnvMapRotation: 0.000000
+  DiffuseEnvTexture: !<reference> 2013a19b-93c1-4f21-b7ea-876a33550c7b
+  SpecularEnvTexture: !<reference> d795fd46-e16b-4cb9-8dfb-4ef227298f7a
+  Color: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowColor: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+  DynamicEnvInputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  InnerConeAngle: 0.000000
+  OuterConeAngle: 45.000000
+  FalloffType: None
+  FalloffRange: .inf
+  ShadowType: None
+- !<SceneObject/0016f62e-a838-4756-bdd0-fa7e7f20a548>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 8c463da2-3940-4545-abc4-93a072deeb32
+- !<SceneObject/01d1366e-4bde-4d64-afca-3c389de0efee>
+  PrefabRemaps:
+    []
+  Name: "[SYSTEM] Tween"
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 4c182702-6546-4041-b844-702ee8e2e661
+- !<ScreenTransform/06d67915-39a1-409a-8517-81e43991568d>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  EnableDebugRender: false
+  Anchor:
+    left: -1.000000
+    bottom: -1.000000
+    right: 1.000000
+    top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
+- !<SceneObject/0a308927-07da-4791-ade5-7944f080fe0a>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D man
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> fc3a12d7-007e-48b6-a5a7-4fb48d058db7
+    - !<own> bb986cf4-fe4f-4fe1-8ccf-e4e1942d5685
+- !<ScriptComponent/16ff4f55-50ce-4716-ac9f-c8e0d4993909>
+  PrefabRemaps:
+    []
+  Name: Adjust
+  Enabled: true
+  ScriptAsset: !<reference> dc6fae76-c70a-4e2c-99b5-442a95000bff
+  ScriptInputsDefault:
+    adjustPrefab: true
+    renderOrder: true
+    contrast: true
+    exposure: true
+    saturation: true
+    vibrance: true
+    warmth: true
+    tint: true
+    sharpen: true
+    grain: true
+    contrastButtonTexture: true
+    exposureButtonTexture: true
+    vibranceButtonTexture: true
+    saturationButtonTexture: true
+    tintButtonTexture: true
+    warmthButtonTexture: true
+    grainButtonTexture: true
+    sharpenButtonTexture: true
+    colorCorrectionButtonTexture: true
+    colorCorrectionTextures: true
+    colorCorrectionIconMaterial: true
+    blockId: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      adjustPrefab: !<reference.ObjectPrefab> 373a0279-30df-4e2d-8f57-a3f1bbc74e99
+      renderOrder: 0
+      contrast: !<float> 1.000000
+      exposure: !<float> 1.000000
+      saturation: !<float> 1.000000
+      vibrance: !<float> 1.000000
+      warmth: !<float> 0.000000
+      tint: !<float> 0.000000
+      sharpen: !<float> 0.000000
+      grain: !<float> 0.000000
+      colorCorrection: 23
+      colorCorrectionIntensity: 0.750000
+      contrastButtonTexture: !<reference.Texture> b4f71c5a-8139-4cdf-8aa0-06d28654a168
+      exposureButtonTexture: !<reference.Texture> 78617a4f-5d80-46ba-a86c-cc6b4016f495
+      vibranceButtonTexture: !<reference.Texture> 1feaf981-fdce-432a-9e1d-6d972a290f23
+      saturationButtonTexture: !<reference.Texture> 1377fa91-1cbf-48c4-b814-3561b9fa8f65
+      tintButtonTexture: !<reference.Texture> b52e11f5-92cf-45df-890a-bcb55cb21a2d
+      warmthButtonTexture: !<reference.Texture> 3c421532-1608-48c8-8ec2-f46a59e219f3
+      grainButtonTexture: !<reference.Texture> 63a3fd01-54e3-4941-91d8-6ddcc1352196
+      sharpenButtonTexture: !<reference.Texture> d46b95e7-783f-4338-aca1-7e4ce77bde72
+      colorCorrectionButtonTexture: !<reference.Texture> e931a073-e9a7-4468-9b3e-05cda7bb56ae
+      colorCorrectionTextures: !<reference.Texture[]>
+        - !<reference> 6d4db49f-55f2-4292-9a4d-472ab65d7bab
+        - !<reference> d3cabcb4-e609-43fe-98c9-0d617925df7a
+        - !<reference> 29fa879a-69b6-4d98-b95f-4a1825d9b8dc
+        - !<reference> 7b260d2a-a09c-4ca9-ac19-0d565cd2706d
+        - !<reference> db658961-22df-4127-87f3-765bcbccea5a
+        - !<reference> 21730a0c-ae25-4c2c-82bd-031fa9740bfc
+        - !<reference> b43ec48f-2c66-4a0f-bb88-2064537ea551
+        - !<reference> b0558abd-b31f-40f8-97eb-2c0e44632e62
+        - !<reference> 08da3108-b8b4-4ae4-8f68-39b6b4254f07
+        - !<reference> 3ff60185-82ae-48e3-8fb0-34441177d012
+        - !<reference> a907060a-6322-4952-8da3-6923eb5cf185
+        - !<reference> fa00c70e-66f3-4252-aa5b-16906ab898f1
+        - !<reference> d23510a5-bfd4-4bd9-817a-21ecb7be5aed
+        - !<reference> 47cd3819-b531-431c-a156-830e65f76e6c
+        - !<reference> 5d006303-851a-4ad5-bf97-7a5cfe6c504d
+        - !<reference> 11cf1d1c-4f9f-495b-83ec-27ac3dce1f7a
+        - !<reference> 0d050244-2bcb-4bc8-98ba-41c5dfbc978a
+        - !<reference> 14f86b3d-cb08-49ef-ab71-b86a4834ceec
+        - !<reference> 5d152b07-ac3f-48f4-8db1-1fff8297a252
+        - !<reference> 9ee42609-bb96-48bc-9a5c-d3766953f513
+        - !<reference> a1b17273-43de-4ae8-bce5-5f359a929d23
+        - !<reference> e2b9d127-2383-43c2-be93-d2829df7641f
+        - !<reference> 3a75fc11-abe6-44e6-9e5c-4c84d9fd8bff
+        - !<reference> 1d829dc3-6166-4bb5-9530-54fcae0b4267
+        - !<reference> b982be9c-24e2-41ac-a4c1-809a00a0bf67
+        - !<reference> 7944e588-3e88-47c0-9784-f7c7ea84f391
+      colorCorrectionIconMaterial: !<reference.Material> dc6279ac-ee32-4328-ab0b-c52732046d22
+      blockId: ""
+  ScriptTypes:
+    "":
+      {}
+- !<Camera/29e4e1c8-fbd5-4a4a-b8ce-8a0c2e95ef0f>
+  PrefabRemaps:
+    []
+  Name: Camera
+  Enabled: true
+  renderLayer: 512
+  MipmapLevel: 0
+  RenderOrder: -10
+  Size: 20.000000
+  Near: -1.000000
+  Far: 200.000000
+  Fov: 63.541019
+  ClearColor: !<CameraClearColor>
+    Mode: None
+    Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  ClearDepth: !<CameraClearDepth>
+    Mode: Value
+    Value: 1.000000
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Aspect: 1.000000
+  CameraType: Orthographic
+  DepthMode: Regular
+  DeviceProperty: All
+  AspectPreset: Custom
+  OitLayers: NoOit
+  RenderTarget: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  DepthStencilRenderTarget: !<reference> 00000000-0000-0000-0000-000000000000
+  MaskTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  RayTracing: !<reference> 00000000-0000-0000-0000-000000000000
+  DevicePropertiesSource: !<reference> 00000000-0000-0000-0000-000000000000
+- !<ScreenTransform/321a6d9a-24f6-43fa-9f4e-6d5344ac5b22>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  EnableDebugRender: false
+  Anchor:
+    left: -1.000000
+    bottom: -1.000000
+    right: 1.000000
+    top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
+- !<SceneObject/362c5406-92fa-4419-a2d9-989ef5e58506>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 8a338f1f-5df4-416e-89a5-e922b8878a90
+    - !<own> 477f9010-22c3-4922-9c56-111b90d604bc
+    - !<own> 69af1fff-c7c1-4d54-8016-e8a219389368
+- !<SceneObject/3ef62b4f-b220-4b13-b3a3-8cc34700434a>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 5ff4b2de-b8da-4209-8326-e05fdd907859
+    - !<own> c6c7feee-e66f-42de-b443-1c4ed3df3ec7
+- !<Canvas/41022ac9-cb8c-4177-b4fa-65db87008a98>
+  PrefabRemaps:
+    []
+  Name: Canvas
+  Enabled: true
+  UnitType: World
+  SortingType: Hierarchy
+  OffsetUnit: World
+  LayoutRect:
+    left: -15.000000
+    bottom: -20.000000
+    right: 15.000000
+    top: 20.000000
+  DebugRenderLayoutRect: false
+  BasisResolution: {x: 1080.000000, y: 1920.000000}
+- !<SceneObject/419ba426-752e-4528-b85c-fa4b3e140d24>
+  PrefabRemaps:
+    []
+  Name: Sparkles
+  Enabled: true
+  Layers: 4096
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> f7c86c67-d07f-4417-8e1c-6a36a8f4a8e6
+  Components:
+    - !<own> 55274006-6537-492f-821d-c36bbe7b0ae1
+- !<AnimationPlayer/477f9010-22c3-4922-9c56-111b90d604bc>
+  PrefabRemaps:
+    []
+  Name: Animation Player
+  Enabled: true
+  Autoplay: true
+  ClipRangeType: Frames
+  AnimationClips:
+    - !<AnimationClip>
+      AnimationAsset: !<reference> 1ea98fff-8fa0-47bc-9169-983e5b9fe323
+      Name: Clip 0
+      Weight: 1.000000
+      PlaybackSpeed: 1.000000
+      Begin: 0.000000
+      End: 3.966667
+      Offset: 0.000000
+      Reversed: false
+      Disabled: false
+      BlendMode: Default
+      ScaleMode: Multiply
+      PlaybackMode: Loop
+- !<SceneObject/48d2c977-ebda-468d-990b-3dc7cff4fbdd>
+  PrefabRemaps:
+    []
+  Name: Post Process - Adjust
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 3ef62b4f-b220-4b13-b3a3-8cc34700434a
+    - !<own> f5538224-7d70-4f57-824d-ca338e365d04
+    - !<own> bedb0b8d-7254-432a-b21b-5f9536987cdb
+    - !<own> 984bed50-c53c-4b16-a88e-6ef2db94fb84
+    - !<own> 0a308927-07da-4791-ade5-7944f080fe0a
+  Components:
+    - !<own> fa41cdf6-6d37-43d4-b58e-679ff7c0114e
+    - !<own> 16ff4f55-50ce-4716-ac9f-c8e0d4993909
+- !<ScriptComponent/49286add-fea1-4869-9f1d-7ff820915cb1>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<ScriptComponent/4c182702-6546-4041-b844-702ee8e2e661>
+  PrefabRemaps:
+    []
+  Name: TweenBlock
+  Enabled: true
+  ScriptAsset: !<reference> 2418ab46-e48e-4b48-8aa4-14549b8227a0
+  ScriptInputsDefault:
+    tweenPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      tweenPrefab: !<reference.ObjectPrefab> 43802594-abfc-40c2-8793-0a72e16569c9
+  ScriptTypes:
+    "":
+      {}
+- !<SceneObject/5482b33e-cfd9-4ce6-9ac4-b333e09d41bc>
+  PrefabRemaps:
+    []
+  Name: 3D Foreground Camera
+  Enabled: true
+  Layers: 4096
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 419ba426-752e-4528-b85c-fa4b3e140d24
+  Components:
+    - !<own> b20460c6-fd42-4ddc-95c6-ca84aede25e9
+- !<ScriptComponent/55274006-6537-492f-821d-c36bbe7b0ae1>
+  PrefabRemaps:
+    []
+  Name: KiraKira Sparkle
+  Enabled: true
+  ScriptAsset: !<reference> 576700e6-71a7-4819-a238-d67ea4970589
+  ScriptInputsDefault:
+    blockId: true
+    segmentationMode: true
+    rotationSpeed: true
+    texture: true
+    meshControl: true
+    controlMaterial: true
+    avgColorMaterial: true
+    normalizeMaterial: true
+    detectorMaterial: true
+    reduceMaterial: true
+    drawReduceMaterial: true
+    accumMaterial: true
+    backgroundSegmentationTexture: true
+    userSegmentationTexture: true
+    sparkleTexture: true
+    colorIcon: true
+    scaleIcon: true
+    maskIcon: true
+    densityIcon: true
+    brightnessIcon: true
+    rotationIcon: true
+    fadeIcon: true
+    userIcon: true
+    backgroundIcon: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      blockId: ""
+      color: !<Vec3> {x: 0.900000, y: 0.950000, z: 1.000000}
+      segmentationMode: 2
+      sparklesDensity: 0.180000
+      speed: 0.250000
+      rotationSpeed: 0.040000
+      scale: 0.180000
+      brightness: 0.450000
+      texture: !<reference.Texture> 37fb7406-f829-46e3-8036-d787cb3c197d
+      meshControl: !<reference.RenderMesh> 238800a8-9942-4cd4-9b77-088012d78454
+      controlMaterial: !<reference.Material> 8b3a851d-074e-467f-b740-889a6d05a8e7
+      avgColorMaterial: !<reference.Material> dd459a88-8b7b-44c7-82f5-db3bb061008b
+      normalizeMaterial: !<reference.Material> 5d67eb05-42f3-4f0e-8208-3c0831dfbf09
+      detectorMaterial: !<reference.Material> e95e8936-96b1-4b4d-98c0-c127470f9991
+      reduceMaterial: !<reference.Material> e5438a38-21b2-40ca-9fb1-d231e402f64d
+      drawReduceMaterial: !<reference.Material> 9fa127e7-57e4-4f07-8663-73511a0e92f1
+      accumMaterial: !<reference.Material> ece20af0-2bf5-4715-8ba5-9cfa2f47d4f0
+      backgroundSegmentationTexture: !<reference.Texture> 9fbcb3c2-a028-4305-b203-5ffa58c0ce29
+      userSegmentationTexture: !<reference.Texture> 6d8ecc1e-a54e-4535-86ea-345e2e8007a3
+      sparkleTexture: !<reference.Texture> 37873d72-ead7-4ce2-83b0-b407f0b4a2a8
+      colorIcon: !<reference.Texture> 9e848e4e-b52a-4ea0-a14b-5c524cf63924
+      scaleIcon: !<reference.Texture> 66a5b9b1-5bd0-45dd-8521-200797e84d66
+      maskIcon: !<reference.Texture> ebed4bd9-29d3-4c01-836d-07ead277f89e
+      densityIcon: !<reference.Texture> 3fda36ed-04bd-4611-bf6a-f38bae635e89
+      brightnessIcon: !<reference.Texture> aeef4e37-df0b-406d-8a1a-9d7b2b7ec470
+      rotationIcon: !<reference.Texture> 1af28de3-8ee3-401f-ab3d-77fdb7020e5e
+      fadeIcon: !<reference.Texture> 09249f45-e91d-4ebe-8e6e-803f2e37679b
+      userIcon: !<reference.Texture> 044ad11b-5f40-4442-bf3e-0e85f937de38
+      backgroundIcon: !<reference.Texture> 2185691b-4b61-4f4d-9ac3-816338efecb0
+  ScriptTypes:
+    "":
+      {}
+- !<SceneObject/58612dc4-cf9b-4024-9ada-b642fa02f9f9>
+  PrefabRemaps:
+    []
+  Name: System Blocks
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 01d1366e-4bde-4d64-afca-3c389de0efee
+  Components:
+    []
+- !<ScreenRegionComponent/5ee6e14a-46e1-4342-8c8d-a67b3c9b998b>
+  PrefabRemaps:
+    []
+  Name: Screen Region
+  Enabled: true
+  ScreenRegionType: FullFrame
+  ResizeWithKeyboard: false
+- !<ScriptComponent/5ff4b2de-b8da-4209-8326-e05fdd907859>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<ScriptComponent/69af1fff-c7c1-4d54-8016-e8a219389368>
+  PrefabRemaps:
+    []
+  Name: BitmojiAnimationController
+  Enabled: true
+  ScriptAsset: !<reference> e364ebe8-1d27-4fdb-9831-90d5df05cdc9
+  ScriptInputsDefault:
+    bitmoji3dComponent: true
+    animationPlayer: true
+    animationAsset: true
+    heavyAnimationAsset: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmoji3dComponent: !<reference.ScriptComponent> 8a338f1f-5df4-416e-89a5-e922b8878a90
+      animationPlayer: !<reference.AnimationPlayer> 477f9010-22c3-4922-9c56-111b90d604bc
+      animationAsset: !<reference.AnimationAsset> 1ea98fff-8fa0-47bc-9169-983e5b9fe323
+      heavyAnimationAsset: !<reference.AnimationAsset> 4c133cf7-dd23-42f1-b075-eb5e6d18742b
+  ScriptTypes:
+    "":
+      {}
+- !<SceneObject/6d09da99-c4eb-41f3-83c7-7e874c95c427>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 49286add-fea1-4869-9f1d-7ff820915cb1
+- !<SceneObject/6f7f0e02-da72-4c56-8a61-8610f3e355b7>
+  PrefabRemaps:
+    []
+  Name: Post Effect Camera
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: -120.000000, y: 0.000000, z: 40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> d8a10d67-a2ef-442f-b74c-5d37bde8a1b3
+  Components:
+    - !<own> d7e01f30-5045-4982-9599-558d7911fb05
+    - !<own> 41022ac9-cb8c-4177-b4fa-65db87008a98
+- !<SceneObject/817e5a54-b4e8-4281-92c9-d983809cc1b1>
+  PrefabRemaps:
+    []
+  Name: Background Image
+  Enabled: true
+  Layers: 512
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 06d67915-39a1-409a-8517-81e43991568d
+    - !<own> 9e62f956-8af1-44cf-90f2-a8e9b16ed614
+- !<ScriptComponent/8a338f1f-5df4-416e-89a5-e922b8878a90>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<ScriptComponent/8c463da2-3940-4545-abc4-93a072deeb32>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<SceneObject/984bed50-c53c-4b16-a88e-6ef2db94fb84>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> e54a469c-f428-476a-b5ae-70eebeca5578
+- !<ScriptComponent/9999c800-c12b-4494-a103-6bc3214a87a3>
+  PrefabRemaps:
+    []
+  Name: Outfit Override
+  Enabled: true
+  ScriptAsset: !<reference> 1199b628-502b-43af-935f-6441849dafe3
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      outfitOverrideParameters: '{"items":[{"optionId":"","type":"outerwear","globalType":"mannequin-with-head-center"},{"optionId":"348","params":"{\"primary\":1776156,\"secondary\":1315861,\"tertiary\":1776156,\"quaternary\":1776156,\"sole\":2631464,\"metal\":7039597,\"laces\":2631464,\"detail\":2171169,\"elastic\":2171169,\"furtrim\":1183764}","type":"footwear","globalType":"mannequin-with-head-center"},{"optionId":"127","params":"{\"primary\":5000268,\"secondary\":4013373,\"tertiary\":3355443,\"quaternary\":2697513,\"buttons\":15263726,\"metal\":10720655,\"laces\":6052956,\"detail\":3355443,\"belt\":7885908,\"furtrim\":8221284}","type":"bottom","globalType":"mannequin-with-head-center"},{"optionId":"1054","params":"{\"primary\":1250067,\"secondary\":1250067,\"tertiary\":1250067,\"quaternary\":1250067,\"buttons\":1776411,\"metal\":5789787,\"laces\":12829635,\"detail\":1776411,\"belt\":1776411,\"furtrim\":2498597}","type":"top","globalType":"mannequin-with-head-center"},{"optionId":"glasses_specstint","params":"{}","type":"glasses","globalType":"glasses"}]}'
+      outfitOverrideList:
+        - type: mannequin-with-head-center
+        - type: glasses
+  ScriptTypes:
+    "":
+      {}
+- !<ScriptComponent/9e62f956-8af1-44cf-90f2-a8e9b16ed614>
+  PrefabRemaps:
+    []
+  Name: BackgroundImage
+  Enabled: true
+  ScriptAsset: !<reference> 2c05665d-03fa-47fd-b034-eab308c5b84b
+  ScriptInputsDefault:
+    blockId: true
+    imageTexAsRemoteAsset: true
+    renderOrder: true
+    maskTex: true
+    imageWithMaskMaterial: true
+    useSegmentation: true
+    offsetX: true
+    offsetY: true
+    scale: true
+    opacity: true
+    rotation: true
+    translateGizmoMaterial: true
+    gizmoShadowMaterial: true
+    useSegmentationIcon: true
+    transformIcon: true
+    overlayFrame: true
+    resetIcon: true
+    cameraRollIcon: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      blockId: ""
+      imageTex: !<reference.Texture> 6524b6c5-c87b-47a9-b521-97a7b104cd28
+      imageTexAsRemoteAsset: !<reference.RemoteReferenceAsset> 00000000-0000-0000-0000-000000000000
+      renderOrder: 0
+      maskTex: !<reference.Texture> ef1c39e8-0cf2-4a6e-8286-efb3e21b0593
+      imageWithMaskMaterial: !<reference.Material> eb152509-0fc9-4734-94ed-8fa263f2b7c0
+      useSegmentation: true
+      offsetX: !<float> 0.000000
+      offsetY: !<float> 0.000000
+      scale: !<float> 1.000000
+      brightness: 1.050000
+      saturation: 1.050000
+      contrast: 0.980000
+      opacity: !<float> 1.000000
+      rotation: !<float> 0.000000
+      translateGizmoMaterial: !<reference.Material> 70250b37-9e86-400f-9058-bbb3b06585c7
+      gizmoShadowMaterial: !<reference.Material> 0e127396-a169-4633-8fe5-521db4a3e027
+      useSegmentationIcon: !<reference.Texture> b2fab310-f783-4f7f-9b5b-878b72cfce3b
+      transformIcon: !<reference.Texture> 562a6a03-3da6-40c9-9867-87f87e47d318
+      overlayFrame: !<reference.Texture> 39aeb70c-146e-4b3a-a034-14333ebdb2b4
+      resetIcon: !<reference.Texture> 761c8621-41b6-4427-b18b-3b5f4e844dd6
+      cameraRollIcon: !<reference.Texture> 902dbb52-26d3-4054-9eae-49e555103c42
+  ScriptTypes:
+    "":
+      {}
+- !<ScreenRegionComponent/a2f7359f-6054-41e7-bcac-4384bf843f1c>
+  PrefabRemaps:
+    []
+  Name: Screen Region
+  Enabled: true
+  ScreenRegionType: FullFrame
+  ResizeWithKeyboard: false
+- !<ScriptComponent/a4282d49-baf7-4b19-8a2e-e7c385f7491b>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<Canvas/b0300dd9-f856-4bad-b716-00d4e127da7d>
+  PrefabRemaps:
+    []
+  Name: Canvas
+  Enabled: true
+  UnitType: World
+  SortingType: Hierarchy
+  OffsetUnit: World
+  LayoutRect:
+    left: -15.000000
+    bottom: -20.000000
+    right: 15.000000
+    top: 20.000000
+  DebugRenderLayoutRect: false
+  BasisResolution: {x: 1080.000000, y: 1920.000000}
+- !<Camera/b20460c6-fd42-4ddc-95c6-ca84aede25e9>
+  PrefabRemaps:
+    []
+  Name: Camera
+  Enabled: true
+  renderLayer: 4096
+  MipmapLevel: 0
+  RenderOrder: 20
+  Size: 20.000000
+  Near: 1.000000
+  Far: 1000.000000
+  Fov: 63.541019
+  ClearColor: !<CameraClearColor>
+    Mode: None
+    Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  ClearDepth: !<CameraClearDepth>
+    Mode: Value
+    Value: 1.000000
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Aspect: 1.000000
+  CameraType: Perspective
+  DepthMode: Regular
+  DeviceProperty: All
+  AspectPreset: Custom
+  OitLayers: NoOit
+  RenderTarget: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  DepthStencilRenderTarget: !<reference> 00000000-0000-0000-0000-000000000000
+  MaskTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  RayTracing: !<reference> 00000000-0000-0000-0000-000000000000
+  DevicePropertiesSource: !<reference> 00000000-0000-0000-0000-000000000000
+- !<ScriptComponent/b70797e0-7756-4c77-8658-86477bae3305>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<ClothVisual/bb986cf4-fe4f-4fe1-8ccf-e4e1942d5685>
+  PrefabRemaps:
+    []
+  Name: Cloth Visual
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    []
+  Mesh: !<reference> 00000000-0000-0000-0000-000000000000
+  DebugModeEnabled: false
+  FrameRate: 30
+  Iterations: 10
+  UpdateNormalsEnabled: false
+  BendMode: Isometric
+  Gravity: {x: 0.000000, y: -10.000000, z: 0.000000}
+  Mass: 1.000000
+  StretchStiffness: 0.500000
+  BendStiffness: 0.100000
+  Friction: 0.000000
+  MaxAcceleration: 10000
+  CollisionEnabled: false
+  CollisionStiffness: 1.000000
+  CollisionOffset: 0.000000
+  CollisionFriction: 0.000000
+  Colliders:
+    []
+  VertexBindings:
+    []
+- !<SceneObject/bedb0b8d-7254-432a-b21b-5f9536987cdb>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> a4282d49-baf7-4b19-8a2e-e7c385f7491b
+    - !<own> 9999c800-c12b-4494-a103-6bc3214a87a3
+- !<ScreenTransform/bfeaf28e-bd00-4d24-bc6a-394564af58c2>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  EnableDebugRender: false
+  Anchor:
+    left: -1.000000
+    bottom: -1.000000
+    right: 1.000000
+    top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
+- !<ScriptComponent/c5d5ff0c-ec2d-4475-a493-442e80135488>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<ScriptComponent/c6c7feee-e66f-42de-b443-1c4ed3df3ec7>
+  PrefabRemaps:
+    []
+  Name: Outfit Override
+  Enabled: true
+  ScriptAsset: !<reference> 1199b628-502b-43af-935f-6441849dafe3
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      outfitOverrideParameters: '{"items":[{"optionId":"","type":"outerwear","globalType":"mannequin-with-head-center"},{"optionId":"348","params":"{\"primary\":1776156,\"secondary\":1315861,\"tertiary\":1776156,\"quaternary\":1776156,\"sole\":2631464,\"metal\":7039597,\"laces\":2631464,\"detail\":2171169,\"elastic\":2171169,\"furtrim\":1183764}","type":"footwear","globalType":"mannequin-with-head-center"},{"optionId":"533","params":"{\"primary\":6377545,\"secondary\":4991026,\"tertiary\":8680814,\"quaternary\":11374189,\"buttons\":2958883,\"metal\":10449722,\"laces\":7759455,\"detail\":4996407,\"belt\":3484196,\"furtrim\":11116700}","type":"bottom","globalType":"mannequin-with-head-center"},{"optionId":"1054","params":"{\"primary\":1250067,\"secondary\":1250067,\"tertiary\":1250067,\"quaternary\":1250067,\"buttons\":1776411,\"metal\":5789787,\"laces\":12829635,\"detail\":1776411,\"belt\":1776411,\"furtrim\":2498597}","type":"top","globalType":"mannequin-with-head-center"}]}'
+      outfitOverrideList:
+        - type: mannequin-with-head-center
+  ScriptTypes:
+    "":
+      {}
+- !<Camera/d7e01f30-5045-4982-9599-558d7911fb05>
+  PrefabRemaps:
+    []
+  Name: Camera
+  Enabled: true
+  renderLayer: 64
+  MipmapLevel: 0
+  RenderOrder: 30
+  Size: 20.000000
+  Near: -1.000000
+  Far: 200.000000
+  Fov: 63.541019
+  ClearColor: !<CameraClearColor>
+    Mode: None
+    Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  ClearDepth: !<CameraClearDepth>
+    Mode: Value
+    Value: 1.000000
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Aspect: 1.000000
+  CameraType: Orthographic
+  DepthMode: Regular
+  DeviceProperty: All
+  AspectPreset: Custom
+  OitLayers: NoOit
+  RenderTarget: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  DepthStencilRenderTarget: !<reference> 00000000-0000-0000-0000-000000000000
+  MaskTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  RayTracing: !<reference> 00000000-0000-0000-0000-000000000000
+  DevicePropertiesSource: !<reference> 00000000-0000-0000-0000-000000000000
+- !<SceneObject/d8a10d67-a2ef-442f-b74c-5d37bde8a1b3>
+  PrefabRemaps:
+    []
+  Name: Full Screen Region
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 48d2c977-ebda-468d-990b-3dc7cff4fbdd
+    - !<own> 0016f62e-a838-4756-bdd0-fa7e7f20a548
+  Components:
+    - !<own> 5ee6e14a-46e1-4342-8c8d-a67b3c9b998b
+    - !<own> bfeaf28e-bd00-4d24-bc6a-394564af58c2
+- !<ScriptComponent/e54a469c-f428-476a-b5ae-70eebeca5578>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
+- !<SceneObject/e990ea8a-c9a9-45e2-bb72-9bd9b2df789b>
+  PrefabRemaps:
+    []
+  Name: Full Screen Region
+  Enabled: true
+  Layers: 512
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 817e5a54-b4e8-4281-92c9-d983809cc1b1
+  Components:
+    - !<own> a2f7359f-6054-41e7-bcac-4384bf843f1c
+    - !<own> 321a6d9a-24f6-43fa-9f4e-6d5344ac5b22
+- !<SceneObject/ee1159d0-a585-4e13-bcc8-fb0af2f8f20b>
+  PrefabRemaps:
+    []
+  Name: 2D Background Camera
+  Enabled: true
+  Layers: 512
+  LocalTransform: !<TransformEntity>
+    Position: {x: -120.000000, y: 0.000000, z: 40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> e990ea8a-c9a9-45e2-bb72-9bd9b2df789b
+  Components:
+    - !<own> 29e4e1c8-fbd5-4a4a-b8ce-8a0c2e95ef0f
+    - !<own> b0300dd9-f856-4bad-b716-00d4e127da7d
+- !<SceneObject/f5538224-7d70-4f57-824d-ca338e365d04>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 64
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> b70797e0-7756-4c77-8658-86477bae3305
+- !<SceneObject/f7c86c67-d07f-4417-8e1c-6a36a8f4a8e6>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  Layers: 4096
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: -50.000000, z: -100.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> c5d5ff0c-ec2d-4475-a493-442e80135488
+- !<ScreenTransform/fa41cdf6-6d37-43d4-b58e-679ff7c0114e>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  EnableDebugRender: false
+  Anchor:
+    left: -1.000000
+    bottom: -1.000000
+    right: 1.000000
+    top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
+- !<ScriptComponent/fc3a12d7-007e-48b6-a5a7-4fb48d058db7>
+  PrefabRemaps:
+    []
+  Name: Bitmoji 3D
+  Enabled: true
+  ScriptAsset: !<reference> 7a3c78c1-4ff4-41a1-9f38-a2b9e6360f03
+  ScriptInputsDefault:
+    bitmojiType: true
+    friendsComponent: true
+    friendIndex: true
+    privacyType: true
+    autoDownload: true
+    renderOrder: true
+    castShadow: true
+    meshQuality: true
+    textureQuality: true
+    autoMention: true
+    printDebug: true
+    printWarnings: true
+    printErrors: true
+    materialHolder: true
+    loaderPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      bitmojiType: !<float> 0.000000
+      friendsComponent: !<reference.Component> 00000000-0000-0000-0000-000000000000
+      friendIndex: 0
+      privacyType: 1
+      autoDownload: true
+      mixamoAnimation: false
+      renderOrder: 0
+      castShadow: true
+      meshQuality: 0.500000
+      textureQuality: 0.500000
+      autoMention: true
+      printDebug: false
+      printWarnings: true
+      printErrors: true
+      materialHolder: !<reference.Material> 40b3147b-e211-4919-9ba0-bedd05c60132
+      loaderPrefab: !<reference.ObjectPrefab> 3642f110-de5e-4fcd-9cf9-bdd9164d8108
+  ScriptTypes:
+    "":
+      {}
