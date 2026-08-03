@@ -116,13 +116,13 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        # 🌟 تم التعديل إلى CompressedStaticFilesStorage لمنع خطأ MissingFileError
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        # 🌟 استبدال CompressedStaticFilesStorage بهذا الخيار المستقر
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",
     },
 }
 
-# 🌟 سطر التوافق المعدّل
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+# 🌟 سطر التوافق
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
 
 # بيانات الاتصال بـ Cloudinary
 CLOUDINARY_STORAGE = {
