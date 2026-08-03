@@ -116,12 +116,13 @@ STORAGES = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # 🌟 تم التعديل إلى CompressedStaticFilesStorage لمنع خطأ MissingFileError
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
-# 🌟 سطر التوافق الخاص بـ Cloudinary لتفادي خطأ AttributeError في Django 5+ / 6
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# 🌟 سطر التوافق المعدّل
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # بيانات الاتصال بـ Cloudinary
 CLOUDINARY_STORAGE = {
