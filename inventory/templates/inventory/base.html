@@ -232,10 +232,12 @@
         {% endblock %}
     </main>
 
-    <!-- ─── حقوق الحفظ واسم المستخدم والتاريخ ─── -->
-    <footer class="bg-dark text-white text-center py-4 mt-auto border-top border-secondary">
+    <!-- ─── حقوق الحفظ بارزة باللون الأبيض والأصفر ─── -->
+    <footer class="bg-dark text-white text-center py-4 mt-auto border-top border-warning shadow-lg">
         <div class="container">
-            <p class="mb-0 small text-muted">جميع الحقوق محفوظة &copy; {% now "Y" %} - يوسف | معرض السيارات</p>
+        <p class="mb-0 fw-bold fs-6 text-white">
+            جميع الحقوق محفوظة &copy; {% now "Y" %} - <span class="text-warning">يوسف</span> | معرض السيارات
+        </p>
         </div>
     </footer>
 
