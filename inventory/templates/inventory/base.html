@@ -103,7 +103,7 @@
                             أرخص سيارة <strong>{{ car.brand }}</strong> متوفرة هي ({{ car.model_name }}) بسعر: 
                             <span class="badge-price mx-2">{{ car.price }} ريال</span>
                             {% if car.id %}
-                                <a href="{% url 'inventory:car_detail' car.id %}" target="_self" class="text-info small fw-bold text-decoration-none ms-1">
+                                <a href="{% url 'inventory:car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
                                     اغتنمها <i class="fas fa-angle-left"></i>
                                 </a>
                             {% endif %}
@@ -117,7 +117,7 @@
                             أرخص سيارة <strong>{{ car.brand }}</strong> متوفرة هي ({{ car.model_name }}) بسعر: 
                             <span class="badge-price mx-2">{{ car.price }} ريال</span>
                             {% if car.id %}
-                                <a href="{% url 'inventory:car_detail' car.id %}" target="_self" class="text-info small fw-bold text-decoration-none ms-1">
+                                <a href="{% url 'inventory:car_detail' car.id %}" class="text-info small fw-bold text-decoration-none ms-1">
                                     اغتنمها <i class="fas fa-angle-left"></i>
                                 </a>
                             {% endif %}
@@ -147,7 +147,7 @@
                         <a class="nav-link text-white" href="{% url 'inventory:index' %}">
                             <i class="fas fa-home me-1 text-secondary"></i> الرئيسية
                         </a>
-                    </li >
+                    </li>
                     
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{% url 'inventory:favorites' %}">
@@ -181,15 +181,14 @@
                         {% endif %}
 
                         <div class="dropdown">
-                            <button class="btn btn-outline-light dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-outline-light dropdown-toggle btn-sm" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user me-1 text-warning"></i> {{ user.username }}
                                 {% if user.is_staff %}<span class="badge bg-danger ms-1">Staff</span>{% endif %}
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end text-end shadow">
+                            <ul class="dropdown-menu dropdown-menu-end text-end shadow" aria-labelledby="userDropdown">
                                 {% if user.is_staff %}
                                     <li><a class="dropdown-item small" href="{% url 'inventory:admin_dashboard' %}"><i class="fas fa-tasks me-1 text-info"></i> لوحة الردود والمتابعة</a></li>
-                                    <!-- 🛠️ تم تعديل السطر أدناه وحذف target="_blank" لحل المشكلة نهائياً -->
-                                    <li><a class="dropdown-item small text-secondary" href="{% url 'admin:index' %}" target="_self"><i class="fas fa-cog me-1"></i> لوحة الإدارة</a></li>
+                                    <li><a class="dropdown-item small text-secondary" href="{% url 'admin:index' %}"><i class="fas fa-cog me-1"></i> لوحة الإدارة</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                 {% endif %}
                                 <li>
@@ -239,19 +238,15 @@
         </div>
     </footer>
 
+    <!-- تحميل مكتبة Bootstrap JS ثم تفعيل القائمة المنسدلة برمجياً -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- 🛠️ كود إجبار الروابط على الفتح في نفس التبويب -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // استهداف جميع الروابط في الصفحة
-            document.querySelectorAll('a').forEach(function(link) {
-                // إجبار الرابط على الفتح في نفس النافذة
-                link.setAttribute('target', '_self');
+        document.addEventListener("DOMContentLoaded", function () {
+            var dropdownElementList = Array.from(document.querySelectorAll('.dropdown-toggle'));
+            dropdownElementList.forEach(function (dropdownToggleEl) {
+                new bootstrap.Dropdown(dropdownToggleEl);
             });
         });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
