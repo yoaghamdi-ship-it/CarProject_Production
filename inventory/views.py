@@ -56,17 +56,30 @@ def check_expired_bookings():
 
 # 1. الصفحة الرئيسية
 def index(request):
-    # جلب السيارات المتاحة فقط أو الفحص المباشر بناءً على حالة السيارة في قاعدة البيانات
+    # جلب جميع السيارات
     cars = Car.objects.all()
     
     for car in cars:
-        # السيارة تكون محجوزة فقط إذا كانت حالتها في جدول السيارات booked
-        # أو إذا كان يوجد حجز مدفوع فعال
+        # السيارة تكون محجوزة فقط إذا كانت حالتها booked أو يوجد حجز مدفوع فعال
         car.is_already_booked = (car.status == 'booked') or Booking.objects.filter(car=car, status='paid').exists()
     
-    # عرض السيارات المتاحة فقط في الشريط المتحرك (Ticker)
-    ticker_cars = [car for car in cars if not car.is_already_booked and car.is_available]
+    # تصفية السيارات المتاحة فقط وغير المحجوزة
+    available_cars = [car for car in cars if not car.is_already_booked and getattr(car, 'is_available', True)]
 
+    # جلب أرخص سيارة متوفرة من كل ماركة (Brand) للشريط المتحرك
+    cheapest_cars_by_brand = {}
+    for car in available_cars:
+        brand = car.brand
+        if brand not in cheapest_cars_by_brand:
+            cheapest_cars_by_brand[brand] = car
+        else:
+            if car.price < cheapest_cars_by_brand[brand].price:
+                cheapest_cars_by_brand[brand] = car
+
+    # قائمة أرخص السيارات لكل ماركة
+    cheapest_cars = list(cheapest_cars_by_brand.values())
+
+    # إعداد المفضلة للمستخدم
     if request.user.is_authenticated:
         if 'wishlist_cars' not in request.session or not request.session['wishlist_cars']:
             favorites = Favorite.objects.filter(user=request.user)
@@ -88,7 +101,8 @@ def index(request):
 
     context = {
         'cars': cars,
-        'ticker_cars': ticker_cars,
+        'cheapest_cars': cheapest_cars,  # تم التمرير ليتوافق مع base.html
+        'ticker_cars': cheapest_cars,    # للتوافق مع أي شاشة أخرى
     }
     return render(request, 'inventory/index.html', context)
 
