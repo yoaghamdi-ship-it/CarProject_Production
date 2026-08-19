@@ -56,20 +56,41 @@ def check_expired_bookings():
 
 # 1. الصفحة الرئيسية
 def index(request):
-    # جلب أسماء الماركات المتوفرة بدون تكرار
-    brands = Car.objects.values_list('brand', flat=True).distinct()
+    # جلب السيارات المتاحة فقط أو الفحص المباشر بناءً على حالة السيارة في قاعدة البيانات
+    cars = Car.objects.all()
     
-    cheapest_cars = []
-    for brand in brands:
-        # جلب أرخص سيارة واحدة فقط لكل ماركة
-        car = Car.objects.filter(brand=brand).order_by('price').first()
-        if car:
-            cheapest_cars.append(car)
+    for car in cars:
+        # السيارة تكون محجوزة فقط إذا كانت حالتها في جدول السيارات booked
+        # أو إذا كان يوجد حجز مدفوع فعال
+        car.is_already_booked = (car.status == 'booked') or Booking.objects.filter(car=car, status='paid').exists()
+    
+    # عرض السيارات المتاحة فقط في الشريط المتحرك (Ticker)
+    ticker_cars = [car for car in cars if not car.is_already_booked and car.is_available]
 
-    return render(request, 'inventory/index.html', {
-        'cheapest_cars': cheapest_cars,
-        # باقي المتغيرات الخاصة بك...
-    })
+    if request.user.is_authenticated:
+        if 'wishlist_cars' not in request.session or not request.session['wishlist_cars']:
+            favorites = Favorite.objects.filter(user=request.user)
+            favorite_car_ids = []
+            
+            for fav in favorites:
+                if hasattr(fav, 'car_id') and fav.car_id:
+                    favorite_car_ids.append(fav.car_id)
+                elif hasattr(fav, 'car') and fav.car:
+                    favorite_car_ids.append(fav.car.id)
+                else:
+                    favorite_car_ids.append(fav.inventory_id)
+            
+            request.session['wishlist_cars'] = favorite_car_ids
+            
+        request.session.modified = True
+    else:
+        request.session['wishlist_cars'] = []
+
+    context = {
+        'cars': cars,
+        'ticker_cars': ticker_cars,
+    }
+    return render(request, 'inventory/index.html', context)
 
 
 # 2. قائمة السيارات
