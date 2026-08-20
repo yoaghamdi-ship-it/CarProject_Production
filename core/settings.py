@@ -157,9 +157,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 # 11. إعدادات الجلسات وتجربة الدخول
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = 'index'
+LOGIN_URL = 'inventory:login'
+LOGIN_REDIRECT_URL = 'inventory:index'
+LOGOUT_REDIRECT_URL = 'inventory:index'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
