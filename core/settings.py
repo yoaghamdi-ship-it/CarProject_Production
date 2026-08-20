@@ -21,6 +21,10 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://CarProject_Production.onrender.com',
+]
+
 
 # 2. التطبيقات المثبتة في المشروع
 INSTALLED_APPS = [

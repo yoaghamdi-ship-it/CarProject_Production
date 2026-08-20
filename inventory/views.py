@@ -56,53 +56,49 @@ def check_expired_bookings():
 
 # 1. الصفحة الرئيسية
 def index(request):
-    # جلب جميع السيارات
     cars = Car.objects.all()
     
     for car in cars:
-        # السيارة تكون محجوزة فقط إذا كانت حالتها booked أو يوجد حجز مدفوع فعال
         car.is_already_booked = (car.status == 'booked') or Booking.objects.filter(car=car, status='paid').exists()
     
-    # تصفية السيارات المتاحة فقط وغير المحجوزة
     available_cars = [car for car in cars if not car.is_already_booked and getattr(car, 'is_available', True)]
 
-    # جلب أرخص سيارة متوفرة من كل ماركة (Brand) للشريط المتحرك
+    # تجميع أرخص السيارات حسب الماركة
     cheapest_cars_by_brand = {}
     for car in available_cars:
         brand = car.brand
-        if brand not in cheapest_cars_by_brand:
+        if brand not in cheapest_cars_by_brand or car.price < cheapest_cars_by_brand[brand].price:
             cheapest_cars_by_brand[brand] = car
-        else:
-            if car.price < cheapest_cars_by_brand[brand].price:
-                cheapest_cars_by_brand[brand] = car
 
-    # قائمة أرخص السيارات لكل ماركة
     cheapest_cars = list(cheapest_cars_by_brand.values())
 
-    # إعداد المفضلة للمستخدم
+    # معالجة المفضلات للمستخدم المسجل بشكل آمن بدون إحداث AttributeError
     if request.user.is_authenticated:
-        if 'wishlist_cars' not in request.session or not request.session['wishlist_cars']:
+        favorite_car_ids = []
+        try:
             favorites = Favorite.objects.filter(user=request.user)
+            for fav in favorites:
+                # محاولة جلب معرف السيارة بأمان مهما كان اسم الحقل في الموديل
+                car_id = getattr(fav, 'car_id', None)
+                if not car_id and hasattr(fav, 'car') and fav.car:
+                    car_id = fav.car.id
+                elif not car_id:
+                    car_id = getattr(fav, 'inventory_id', None)
+                
+                if car_id:
+                    favorite_car_ids.append(car_id)
+        except Exception:
             favorite_car_ids = []
             
-            for fav in favorites:
-                if hasattr(fav, 'car_id') and fav.car_id:
-                    favorite_car_ids.append(fav.car_id)
-                elif hasattr(fav, 'car') and fav.car:
-                    favorite_car_ids.append(fav.car.id)
-                else:
-                    favorite_car_ids.append(fav.inventory_id)
-            
-            request.session['wishlist_cars'] = favorite_car_ids
-            
+        request.session['wishlist_cars'] = favorite_car_ids
         request.session.modified = True
     else:
         request.session['wishlist_cars'] = []
 
     context = {
         'cars': cars,
-        'cheapest_cars': cheapest_cars,  # تم التمرير ليتوافق مع base.html
-        'ticker_cars': cheapest_cars,    # للتوافق مع أي شاشة أخرى
+        'cheapest_cars': cheapest_cars,
+        'ticker_cars': cheapest_cars,
     }
     return render(request, 'inventory/index.html', context)
 
